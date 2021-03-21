@@ -9,7 +9,8 @@ const grid = [
 function hover(event: any) {
 	const x = event.clientX;
 	const y = event.clientY;
-	document.getElementById('output')!.innerText = `x: ${x}, y: ${y}`;
+	document.getElementById('output')!
+			.innerText = `x: ${x}, y: ${y}`;
 }
 
 function addArrows(carElement: HTMLElement) {
@@ -32,8 +33,10 @@ function addArrows(carElement: HTMLElement) {
 
 function removeArrows(carElement: HTMLElement) {
 	carElement.classList.remove('tagged');
-	const up = document.getElementsByClassName('arrow-up').item(0)!;
-	const down = document.getElementsByClassName('arrow-down').item(0)!;
+	const up = document.getElementsByClassName('arrow-up')
+					   .item(0)!;
+	const down = document.getElementsByClassName('arrow-down')
+						 .item(0)!;
 	carElement.removeChild(up);
 	carElement.removeChild(down);
 	// const left = document.getElementsByClassName('arrow-left').item(0)!;
@@ -42,16 +45,16 @@ function removeArrows(carElement: HTMLElement) {
 	// carElement.removeChild(right);
 }
 
-export default function app() {
+export default function start() {
 	console.log('Lets build an app!');
 	console.log(grid);
 	document.querySelectorAll('.car')
-		.forEach((carElement) => {
-			carElement.addEventListener('mousemove', (event) => hover(event));
-			carElement.addEventListener('mouseover', () => addArrows(carElement as HTMLElement));
-			carElement.addEventListener('mouseleave', () => removeArrows(carElement as HTMLElement));
-			console.log('added eventListener');
-		});
+			.forEach((carElement) => {
+				carElement.addEventListener('mousemove', (event) => hover(event));
+				carElement.addEventListener('mouseover', () => addArrows(carElement as HTMLElement));
+				carElement.addEventListener('mouseleave', () => removeArrows(carElement as HTMLElement));
+				console.log('added eventListener');
+			});
 }
 
-app();
+start();
