@@ -9,3 +9,6 @@ Wellicht omdat sass ook de distfolder aanspreekt?
 #### Day 2
 - De build configuratie gelijk getrokken met het template project zodat alles weer werkt.
 - Styling van de pijltjes op de auto's gefixed
+todo:
+  - get rid of the origin and create a new repo
+  - figure out where on the tile the mouse is and where the user wants to move to.
