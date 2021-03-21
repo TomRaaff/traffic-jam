@@ -2,19 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AppTitle</title>
+    <title>Traffic jam</title>
     <link rel="website icon" href="./resources/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./dist/styles.css"/>
+    <link rel="stylesheet" href="./styles.css"/>
 </head>
 <body>
 
 <main>
     <section>
-        <h1>Here's an app-starter for you</h1>
-        <p>Enjoy coding!</p>
+        <h1>It's a traffic jam!</h1>
+        <p>How are you going to get out?</p>
     </section>
+
+    <section class="car-grid">
+        <!--Row1-->
+        <div class="free-space" id="11"></div>
+        <div class="free-space" id="12"></div>
+        <div class="free-space" id="13"></div>
+        <div class="free-space" id="14"></div>
+        <div class="free-space" id="15"></div>
+        <!--Row2-->
+        <div class="free-space" id="21"></div>
+        <div class="car player" id="22"></div>
+        <div class="free-space" id="23"></div>
+        <div class="free-space" id="24"></div>
+        <div class="free-space" id="25"></div>
+        <!--Row3-->
+        <div class="free-space" id="31"></div>
+        <div class="free-space" id="32"></div>
+        <div class="free-space" id="33"></div>
+        <div class="free-space" id="34"></div>
+        <div class="free-space" id="35"></div>
+        <!--Row4-->
+        <div class="free-space" id="41"></div>
+        <div class="car" id="42"></div>
+        <div class="free-space" id="43"></div>
+        <div class="free-space" id="44"></div>
+        <div class="free-space" id="45"></div>
+        <!--Row5-->
+        <div class="free-space" id="51"></div>
+        <div class="free-space" id="52"></div>
+        <div class="free-space" id="53"></div>
+        <div class="free-space" id="54"></div>
+        <div class="free-space" id="55"></div>
+    </section>
+    <p id="output"></p>
 </main>
 
 <script type="module" src="./dist/bundle.js"></script>
