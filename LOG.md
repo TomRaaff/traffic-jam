@@ -5,3 +5,7 @@ Klik op linker helft van het element stuurt de auto naar links.
 
 Probleem: webpack bundelt de ts files opeens niet meer...
 Wellicht omdat sass ook de distfolder aanspreekt?
+
+#### Day 2
+- De build configuratie gelijk getrokken met het template project zodat alles weer werkt.
+- Styling van de pijltjes op de auto's gefixed
