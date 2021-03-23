@@ -6,13 +6,24 @@ const grid = [
 	51, 52, 53, 54, 55,
 ];
 
-function createElement(type: string, classes: string[]): HTMLElement {
+const clickArrow = function (direction: 'up' | 'down' | 'left' | 'right') {
+	return (event: Event) => {
+		console.log(event);
+		const gridId = event.target?.parentElement?.parentElement.id;
+		console.log('clicked', direction, gridId);
+	};
+};
+
+function createElement(type: string, classes: string[], clickListener?: (ev: MouseEvent) => any): HTMLElement {
 	const element = document.createElement(type.toUpperCase());
 	classes.forEach((c) => element.classList.add(c));
+	if (clickListener) {
+		element.addEventListener('click', clickListener);
+	}
 	return element;
 }
 
-function hover(event: any) {
+function hover(event: MouseEvent) {
 	const x = event.clientX;
 	const y = event.clientY;
 	document.getElementById('output')!
@@ -25,10 +36,10 @@ function addArrows(carElement: HTMLElement) {
 		const arrowContainerTop = createElement('DIV', ['arrow-container', 'top']);
 		const arrowContainerCenter = createElement('DIV', ['arrow-container', 'center']);
 		const arrowContainerBottom = createElement('DIV', ['arrow-container', 'bottom']);
-		const up = createElement('DIV', ['arrow-up']);
-		const down = createElement('DIV', ['arrow-down']);
-		const left = createElement('DIV', ['arrow-left']);
-		const right = createElement('DIV', ['arrow-right']);
+		const up = createElement('DIV', ['up'], clickArrow('up'));
+		const down = createElement('DIV', ['down'], clickArrow('down'));
+		const left = createElement('DIV', ['left'], clickArrow('left'));
+		const right = createElement('DIV', ['right'], clickArrow('right'));
 		arrowContainerTop.appendChild(up);
 		arrowContainerCenter.appendChild(left);
 		arrowContainerCenter.appendChild(right);
@@ -54,7 +65,7 @@ export default function start() {
 	console.log(grid);
 	document.querySelectorAll('.car')
 			.forEach((carElement) => {
-				carElement.addEventListener('mousemove', (event) => hover(event));
+				carElement.addEventListener('mousemove', (event: Event) => hover(event as MouseEvent));
 				carElement.addEventListener('mouseover', () => addArrows(carElement as HTMLElement));
 				carElement.addEventListener('mouseleave', () => removeArrows(carElement as HTMLElement));
 			});
