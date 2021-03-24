@@ -1,15 +1,8 @@
-const grid = [
-	11, 12, 13, 14, 15,
-	21, 22, 23, 24, 25,
-	31, 32, 33, 34, 35,
-	41, 42, 43, 44, 45,
-	51, 52, 53, 54, 55,
-];
+import { GridItem } from './types/DataTypes';
 
 const clickArrow = function (direction: 'up' | 'down' | 'left' | 'right') {
 	return (event: Event) => {
-		console.log(event);
-		const gridId = event.target?.parentElement?.parentElement.id;
+		const gridId = (event.currentTarget as HTMLElement)?.parentNode?.parentElement?.id;
 		console.log('clicked', direction, gridId);
 	};
 };
@@ -21,13 +14,6 @@ function createElement(type: string, classes: string[], clickListener?: (ev: Mou
 		element.addEventListener('click', clickListener);
 	}
 	return element;
-}
-
-function hover(event: MouseEvent) {
-	const x = event.clientX;
-	const y = event.clientY;
-	document.getElementById('output')!
-			.innerText = `x: ${x}, y: ${y}`;
 }
 
 function addArrows(carElement: HTMLElement) {
@@ -60,15 +46,31 @@ function removeArrows(carElement: HTMLElement) {
 	}
 }
 
-export default function start() {
+export function determineType(classList: string[]): 'player' | 'car' | 'free' {
+	if (classList.includes('player')) return 'player';
+	if (classList.includes('car')) return 'car';
+	return 'free';
+}
+
+function getGrid(): GridItem[] {
+	return Array.from(document.querySelectorAll('[data-type="grid-item"]'))
+				.map((item: unknown) => item as HTMLDivElement)
+				.map((item) => {
+					const classes = Array.from(item.classList.values());
+					const gridItem = {
+						id: parseInt(item.id, 10),
+						type: determineType(classes),
+					} as GridItem;
+					return gridItem;
+				});
+}
+
+export default function app() {
 	console.log('Lets build an app!');
-	console.log(grid);
+	console.log(getGrid());
 	document.querySelectorAll('.car')
 			.forEach((carElement) => {
-				carElement.addEventListener('mousemove', (event: Event) => hover(event as MouseEvent));
 				carElement.addEventListener('mouseover', () => addArrows(carElement as HTMLElement));
 				carElement.addEventListener('mouseleave', () => removeArrows(carElement as HTMLElement));
 			});
 }
-
-start();

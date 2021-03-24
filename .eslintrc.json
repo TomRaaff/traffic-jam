@@ -22,10 +22,14 @@
             "MemberExpression": 2,
             "VariableDeclarator": 2
         }],
+        "max-len": ["error", {
+            "code": 150
+        }],
         "no-tabs": 0,
         "no-mixed-spaces-and-tabs": 0,
         "import/no-unresolved": 0,
         "import/extensions": 0,
-        "no-unused-vars": 0
+        "no-unused-vars": 0,
+        "no-useless-constructor": 0
     }
 }
