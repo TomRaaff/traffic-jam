@@ -1,6 +1,6 @@
 import './styles.sass';
-import app from './app';
+import start from './IO';
 
 (function () {
-	app();
+	start();
 }());

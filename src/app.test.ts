@@ -1,11 +1,7 @@
 import { describe, it, expect } from '@jest/globals';
-import app, { determineType } from './app';
+import { determineType } from './app';
 
 describe('App', () => {
-	it('should have a app function', () => {
-		expect(typeof app).toBe('function');
-	});
-
 	describe('determineType', () => {
 		it('should return player', () => {
 			const result = determineType(['player']);
