@@ -57,9 +57,12 @@ function readGrid(): GridItem[] {
 const clickArrow = function (direction: Direction) {
 	return (event: Event) => {
 		const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
-		const gridId = getGridItemId(arrowParent);
-		const type = determineType(getClassList(arrowParent));
-		const newGrid = moveItem(type, gridId, direction, Collection.of(readGrid()));
+		const newGrid = moveItem({
+									 type: determineType(getClassList(arrowParent)),
+									 locationId: getGridItemId(arrowParent),
+									 direction,
+									 currentGrid: Collection.of(readGrid()),
+								 });
 		render(newGrid);
 	};
 };

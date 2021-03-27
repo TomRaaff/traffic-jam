@@ -34,10 +34,17 @@ function calcNextLocation(current: number, direction: Direction, currentGrid: Co
 	}
 }
 
+export type MoveItemInput = {
+	type: Type;
+	locationId: number;
+	direction: Direction;
+	currentGrid: Collection<GridItem>;
+}
+
 // todo: implement this.
-export function moveItem(type: Type, locationId: number, direction: Direction, currentGrid: Collection<GridItem>): Collection<GridItem> {
-	console.log('moveItem', type, locationId, direction, currentGrid);
-	const nextLocation = calcNextLocation(locationId, direction, currentGrid);
+export function moveItem(input: MoveItemInput): Collection<GridItem> {
+	const { locationId, currentGrid } = input;
+	const nextLocation = calcNextLocation(locationId, input.direction, currentGrid);
 	return currentGrid.map(setType(locationId, Type.FREE))
-					  .map(setType(nextLocation, type));
+					  .map(setType(nextLocation, input.type));
 }
