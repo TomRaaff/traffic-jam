@@ -4,34 +4,53 @@ import Direction from './types/Direction.enum';
 import Collection from './types/util/Collection';
 import { addChildren, clearClasses, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
 import Type from './types/Type.enum';
+import Violation from './types/Violation.enum';
 
 // todo: fix eslint vs intellij formatter
 function isChanged(element: HTMLElement, type: Type): boolean {
 	return determineType(getClassList(element)) !== type;
 }
 
-function render(grid: Collection<GridItem>): void {
+function renderGrid(grid: Collection<GridItem>): void {
 	grid.forEach((gridItem) => {
 		const selector = `[id="${gridItem.id}"]`;
-		select(selector).getOrElse(
-			() => console.error('could not find element for selector: ', selector),
-			(element) => {
-				if (isChanged(element, gridItem.type)) {
-					removeArrows(element);
-					element.removeEventListener('mouseover', () => addArrows(element));
-					element.removeEventListener('mouseleave', () => removeArrows(element));
-					clearClasses(element);
+		select(selector)
+				.getOrElse(
+					() => console.error('could not find element for selector: ', selector),
+					(element) => {
+						if (isChanged(element, gridItem.type)) {
+							removeArrows(element);
+							element.removeEventListener('mouseover', () => addArrows(element));
+							element.removeEventListener('mouseleave', () => removeArrows(element));
+							clearClasses(element);
 
-					element.classList.add(gridItem.type);
-					if (gridItem.type !== Type.FREE) {
-						element.addEventListener('mouseover', () => addArrows(element));
-						element.addEventListener('mouseleave', () => removeArrows(element));
-					}
-				}
-				return element;
-			},
-		);
+							element.classList.add(gridItem.type);
+							if (gridItem.type !== Type.FREE) {
+								element.addEventListener('mouseover', () => addArrows(element));
+								element.addEventListener('mouseleave', () => removeArrows(element));
+							}
+						}
+						return element;
+					},
+				);
 	});
+}
+
+function renderViolation(violation: Violation): void {
+	select('.popup')
+			.getOrElse(
+				() => console.error('could not find class .popup'),
+				(element) => {
+					element.classList.add('show');
+					element.innerText = violation;
+					setTimeout(
+						() => {
+							element.classList.remove('show');
+						},
+						2000,
+					);
+				},
+			);
 }
 
 function getArrowParent(arrowElement: HTMLElement): HTMLElement {
@@ -57,14 +76,15 @@ const clickArrow = function (direction: Direction): (e: Event) => void {
 	return (event: Event): void => {
 		const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
 		moveItem({
-					 type: determineType(getClassList(arrowParent)),
-					 locationId: getGridItemId(arrowParent),
-					 direction,
-					 currentGrid: Collection.of(readGrid()),
-				 }).leftOrRight(
-			(violation) => console.log(violation),
-			(newGrid) => render(newGrid),
-		);
+			type: determineType(getClassList(arrowParent)),
+			locationId: getGridItemId(arrowParent),
+			direction,
+			currentGrid: Collection.of(readGrid()),
+		})
+				.leftOrRight(
+					renderViolation,
+					renderGrid,
+				);
 	};
 };
 

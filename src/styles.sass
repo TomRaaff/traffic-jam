@@ -22,12 +22,13 @@ body
 
   main
     margin: auto
+    padding: 2rem
     background-color: $offWhite
     width: 100vw
     height: 100vh
 
   section
-    padding-top: 10vh
+    padding-top: 1rem
     text-align: center
     margin-bottom: 1rem
 
@@ -71,6 +72,33 @@ body
     .player:hover
       background: $green
       padding: 5%
+
+  .popup
+    display: inline-block
+    margin: auto 2rem
+    visibility: hidden
+    background-color: #555
+    color: #fff
+    text-align: center
+    border-radius: 6px
+    padding: 1rem
+
+  .popup.show
+    visibility: visible
+    animation: fadeIn 0.3s
+    animation: fadeOut 2s
+
+  @keyframes fadeIn
+    from
+      opacity: 0
+    to
+      opacity: 1
+
+  @keyframes fadeOut
+    from
+      opacity: 1
+    to
+      opacity: 0
 
 .arrow-container
   width: 100%
