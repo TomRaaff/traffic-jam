@@ -1,17 +1,16 @@
 export default class Left<L> {
-	private constructor(private readonly value: L) {}
+	private constructor(private readonly value: L) {
+	}
 
-	isLeft() { return true; }
+	map<R, S>(fn: (r: R) => S): Left<L> {
+		return this;
+	}
 
-	isRight() { return false; }
+	fold(ifLeft: (l: L) => L | void): L | void {
+		return ifLeft(this.value);
+	}
 
-	map(fn: (l:L) => Left<any>) { return this; }
-
-	flatMap(fn: (l:L) => unknown) { return this; }
-
-	fold(ifLeft: (l:L) => unknown, fn: Function) { return ifLeft(this.value); }
-
-	static of<L>(value: L) {
+	static of<S>(value: S) {
 		return new Left(value);
 	}
 }

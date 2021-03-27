@@ -2,19 +2,33 @@ import Right from './Right';
 import Left from './Left';
 
 export default class Either<L, R> {
-	private constructor(private readonly value: Left<L> | Right<R>) {}
+	private constructor(private readonly left: Left<L> | undefined,
+						private readonly right: Right<R> | undefined) {
+		if (!(left) && !(right)) {
+			throw new Error('invalid creation of Either. L & R are both undefined');
+		}
+	}
 
-	isLeft() { return this.value.isLeft(); }
+	map<S>(fn: (a: R) => S): Either<L|undefined, S|undefined> {
+		return new Either(this.left?.map(fn), this.right?.map(fn));
+	}
 
-	isRight() { return this.value.isRight(); }
+	flatMap<S>(fn: (a: R) => Either<L|undefined, S|undefined>): Either<L|undefined, S|undefined> {
+		if (this.left) {
+			return new Either(this.left, undefined);
+		}
+		return this.right!.flatMap(fn);
+	}
 
-	map(fn: (a: L|R) => any) { return this.value.map(fn); }
+	fold(ifLeft: (l:L) => L | void, ifRight: (r: R) => R | void): L | R | void {
+		return (this.left) ? this.left?.fold(ifLeft) : this.right?.fold(ifRight);
+	}
 
-	flatMap(fn: (a: L|R) => any) { return this.value.flatMap(fn); }
+	static of<T>(val: T): Either<undefined, T> {
+		return new Either(undefined, Right.of(val));
+	}
 
-	fold(ifLeft: (l:L) => unknown, fn: (r: R) => unknown) { return this.value.fold(ifLeft, fn); }
-
-	static of<R>(val: R) { return new Either(Right.of(val)); }
-
-	static ofLeft<L>(val: L) { return new Either(Left.of(val)); }
+	static ofLeft<T>(val: T): Either<T, undefined> {
+		return new Either(Left.of(val), undefined);
+	}
 }

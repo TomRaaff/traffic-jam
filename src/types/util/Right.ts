@@ -1,17 +1,22 @@
+import Either from './Either';
+
 export default class Right<R> {
-	private constructor(private readonly value: R) {}
+	private constructor(private readonly value: R) {
+	}
 
-	isLeft() { return false; }
+	map<S>(fn: (r: R) => S): Right<S> {
+		return Right.of(fn(this.value));
+	}
 
-	isRight() { return true; }
+	flatMap<L, S>(fn: (r: R) => Either<L, S>): Either<L, S> {
+		return fn(this.value);
+	}
 
-	map(fn: (r: R) => Right<any>) { return Right.of(fn(this.value)); }
+	fold(ifRight: (r: R) => R | void): R | void {
+		return ifRight(this.value);
+	}
 
-	flatMap(fn: (r: R) => unknown) { return fn(this.value); }
-
-	fold(ifLeft: Function, fn: (r: R) => unknown) { return fn(this.value); }
-
-	static of<R>(value: R) {
+	static of<S>(value: S) {
 		return new Right(value);
 	}
 }
