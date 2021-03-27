@@ -12,11 +12,11 @@ export default class Right<R> {
 		return fn(this.value);
 	}
 
-	fold(ifRight: (r: R) => R | void): R | void {
+	getRight(ifRight: (r: R) => R | void): R | void {
 		return ifRight(this.value);
 	}
 
-	static of<S>(value: S) {
+	static of<S>(value: S): Right<S> {
 		return new Right(value);
 	}
 }

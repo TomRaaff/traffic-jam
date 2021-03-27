@@ -6,11 +6,11 @@ export default class Left<L> {
 		return this;
 	}
 
-	fold(ifLeft: (l: L) => L | void): L | void {
+	getLeft(ifLeft: (l: L) => L | void): L | void {
 		return ifLeft(this.value);
 	}
 
-	static of<S>(value: S) {
+	static of<S>(value: S): Left<S> {
 		return new Left(value);
 	}
 }

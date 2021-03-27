@@ -1,9 +1,12 @@
-import { beforeEach, describe, expect, it, } from '@jest/globals';
+import {
+	beforeEach, describe, expect, it,
+} from '@jest/globals';
 import { determineType, moveItem } from './app';
 import Direction from './types/Direction.enum';
 import GridItem from './types/GridItem';
 import Type from './types/Type.enum';
 import Collection from './types/util/Collection';
+import Violation from './types/Violation.enum';
 
 let defaultGrid: Collection<GridItem>;
 beforeEach(() => {
@@ -70,14 +73,17 @@ describe('App', () => {
 				const expected = inputGrid.map(setType(currentLocation, Type.FREE))
 										  .map(setType(21, Type.PLAYER));
 				// act
-				const newGrid = moveItem({
+				const result = moveItem({
 											 type: Type.PLAYER,
 											 locationId: currentLocation,
 											 direction: Direction.LEFT,
 											 currentGrid: inputGrid,
 										 });
 				// assert
-				expect(newGrid).toEqual(expected);
+				result.leftOrRight(
+					(violation) => expect(violation).toBeFalsy(),
+					(newGrid) => expect(newGrid).toEqual(expected),
+				);
 			});
 			it('to the right', () => {
 				// arrange
@@ -86,14 +92,17 @@ describe('App', () => {
 				const expected = inputGrid.map(setType(currentLocation, Type.FREE))
 										  .map(setType(23, Type.PLAYER));
 				// act
-				const newGrid = moveItem({
+				const result = moveItem({
 											 type: Type.PLAYER,
 											 locationId: currentLocation,
 											 direction: Direction.RIGHT,
 											 currentGrid: inputGrid,
 										 });
 				// assert
-				expect(newGrid).toEqual(expected);
+				result.leftOrRight(
+					(violation) => expect(violation).toBeFalsy(),
+					(newGrid) => expect(newGrid).toEqual(expected),
+				);
 			});
 			it('up', () => {
 				// arrange
@@ -102,14 +111,17 @@ describe('App', () => {
 				const expected = inputGrid.map(setType(currentLocation, Type.FREE))
 										  .map(setType(12, Type.PLAYER));
 				// act
-				const newGrid = moveItem({
+				const result = moveItem({
 											 type: Type.PLAYER,
 											 locationId: currentLocation,
 											 direction: Direction.UP,
 											 currentGrid: inputGrid,
 										 });
 				// assert
-				expect(newGrid).toEqual(expected);
+				result.leftOrRight(
+					(violation) => expect(violation).toBeFalsy(),
+					(newGrid) => expect(newGrid).toEqual(expected),
+				);
 			});
 			it('down', () => {
 				// arrange
@@ -118,14 +130,17 @@ describe('App', () => {
 				const expected = inputGrid.map(setType(currentLocation, Type.FREE))
 										  .map(setType(32, Type.PLAYER));
 				// act
-				const newGrid = moveItem({
+				const result = moveItem({
 											 type: Type.PLAYER,
 											 locationId: currentLocation,
 											 direction: Direction.DOWN,
 											 currentGrid: inputGrid,
 										 });
 				// assert
-				expect(newGrid).toEqual(expected);
+				result.leftOrRight(
+					(violation) => expect(violation).toBeFalsy(),
+					(newGrid) => expect(newGrid).toEqual(expected),
+				);
 			});
 		});
 
@@ -133,18 +148,20 @@ describe('App', () => {
 			it('when there is a car blockade on the left', () => {
 				// arrange
 				const currentLocation = 22;
-				const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-				const expected = inputGrid.map(setType(currentLocation, Type.FREE))
-										  .map(setType(32, Type.PLAYER));
+				const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER))
+											 .map(setType(currentLocation + 1, Type.CAR));
 				// act
-				const newGrid = moveItem({
+				const result = moveItem({
 											 type: Type.PLAYER,
 											 locationId: currentLocation,
-											 direction: Direction.DOWN,
+											 direction: Direction.RIGHT,
 											 currentGrid: inputGrid,
 										 });
 				// assert
-				expect(newGrid).toEqual(expected);
+				result.leftOrRight(
+					(violation) => expect(violation).toEqual(Violation.BLOCKED_BY_CAR),
+					(grid) => expect(grid).toBeFalsy(),
+				);
 			});
 		});
 	});

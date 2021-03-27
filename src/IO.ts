@@ -13,25 +13,24 @@ function isChanged(element: HTMLElement, type: Type): boolean {
 function render(grid: Collection<GridItem>): void {
 	grid.forEach((gridItem) => {
 		const selector = `[id="${gridItem.id}"]`;
-		select(selector)
-				.fold(
-					() => console.error('could not find element for selector: ', selector),
-					(element) => {
-						if (isChanged(element, gridItem.type)) {
-							removeArrows(element);
-							element.removeEventListener('mouseover', () => addArrows(element));
-							element.removeEventListener('mouseleave', () => removeArrows(element));
-							clearClasses(element);
+		select(selector).getOrElse(
+			() => console.error('could not find element for selector: ', selector),
+			(element) => {
+				if (isChanged(element, gridItem.type)) {
+					removeArrows(element);
+					element.removeEventListener('mouseover', () => addArrows(element));
+					element.removeEventListener('mouseleave', () => removeArrows(element));
+					clearClasses(element);
 
-							element.classList.add(gridItem.type);
-							if (gridItem.type !== Type.FREE) {
-								element.addEventListener('mouseover', () => addArrows(element));
-								element.addEventListener('mouseleave', () => removeArrows(element));
-							}
-						}
-						return element;
-					},
-				);
+					element.classList.add(gridItem.type);
+					if (gridItem.type !== Type.FREE) {
+						element.addEventListener('mouseover', () => addArrows(element));
+						element.addEventListener('mouseleave', () => removeArrows(element));
+					}
+				}
+				return element;
+			},
+		);
 	});
 }
 
@@ -54,16 +53,18 @@ function readGrid(): GridItem[] {
 			));
 }
 
-const clickArrow = function (direction: Direction) {
-	return (event: Event) => {
+const clickArrow = function (direction: Direction): (e: Event) => void {
+	return (event: Event): void => {
 		const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
-		const newGrid = moveItem({
-									 type: determineType(getClassList(arrowParent)),
-									 locationId: getGridItemId(arrowParent),
-									 direction,
-									 currentGrid: Collection.of(readGrid()),
-								 });
-		render(newGrid);
+		moveItem({
+					 type: determineType(getClassList(arrowParent)),
+					 locationId: getGridItemId(arrowParent),
+					 direction,
+					 currentGrid: Collection.of(readGrid()),
+				 }).leftOrRight(
+			(violation) => console.log(violation),
+			(newGrid) => render(newGrid),
+		);
 	};
 };
 
