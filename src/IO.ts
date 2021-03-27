@@ -2,58 +2,60 @@ import GridItem from './types/GridItem';
 import { determineType, moveItem } from './app';
 import Direction from './types/Direction.enum';
 import Collection from './types/util/Collection';
+import { addChildren, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
+import Type from './types/Type.enum';
 
 // todo: fix eslint vs intellij formatter
 function readGrid(): GridItem[] {
-	return Array.from(document.querySelectorAll('[data-type="grid-item"]'))
-				.map((item: unknown) => item as HTMLDivElement)
-				.map((item) => {
-					const classes = Array.from(item.classList.values());
-					const gridItem = {
+	return selectAll('[data-type="grid-item"]')
+			.map((item) => (
+					{
 						id: parseInt(item.id, 10),
-						type: determineType(classes),
-					} as GridItem;
-					return gridItem;
-				});
+						type: determineType(getClassList(item)),
+					} as GridItem
+			));
+}
+
+function getArrowParent(arrowElement: HTMLElement): HTMLElement {
+	return arrowElement.parentElement!.parentElement!;
 }
 
 function getGridItemId(element: HTMLElement): number {
-	const idString = element.parentElement!.parentElement!.id;
+	const idString = element.id;
 	return parseInt(idString, 10);
+}
+
+function isChanged(element: HTMLElement, type: Type): boolean {
+	return determineType(getClassList(element)) !== type;
+}
+
+function render(grid: Collection<GridItem>): void {
+	grid.forEach((gridItem) => {
+		const element = select(`[id="${gridItem.id}"]`)!;
+		if (isChanged(element, gridItem.type)) {
+			removeArrows(element);
+			element.removeEventListener('mouseover', () => addArrows(element));
+			element.removeEventListener('mouseleave', () => removeArrows(element));
+			element.className = '';
+
+			element.classList.add(gridItem.type);
+			if (gridItem.type !== Type.FREE) {
+				element.addEventListener('mouseover', () => addArrows(element));
+				element.addEventListener('mouseleave', () => removeArrows(element));
+			}
+		}
+	});
 }
 
 const clickArrow = function (direction: Direction) {
 	return (event: Event) => {
-		const gridId = getGridItemId((event.currentTarget as HTMLElement)!);
-		moveItem(gridId, direction, Collection.of(readGrid()));
-		// render(newGrid);
+		const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
+		const gridId = getGridItemId(arrowParent);
+		const type = determineType(getClassList(arrowParent));
+		const newGrid = moveItem(type, gridId, direction, Collection.of(readGrid()));
+		render(newGrid);
 	};
 };
-
-function createElement(type: string, classes: string[], clickListener?: (ev: MouseEvent) => any): HTMLElement {
-	const element = document.createElement(type.toUpperCase());
-	classes.forEach((c) => element.classList.add(c));
-	if (clickListener) {
-		element.addEventListener('click', clickListener);
-	}
-	return element;
-}
-
-function hasFocus(element: HTMLElement): boolean {
-	return element.classList.contains('focus');
-}
-function focus(element: HTMLElement): void {
-	element.classList.add('focus');
-}
-function removeFocus(element: HTMLElement): void {
-	element.classList.remove('focus');
-}
-
-function addChildren(parent: HTMLElement, children: HTMLElement[]): void {
-	children.forEach((child) => {
-		parent.appendChild(child);
-	});
-}
 
 function addArrows(carElement: HTMLElement) {
 	if (!hasFocus(carElement)) {
@@ -74,19 +76,19 @@ function addArrows(carElement: HTMLElement) {
 
 function removeArrows(carElement: HTMLElement) {
 	if (hasFocus(carElement)) {
-		Array.from(document.querySelectorAll('.arrow-container'))
-			 .forEach((container) => {
-				 carElement.removeChild(container);
-			 });
+		selectAll('.arrow-container')
+				.forEach((container) => {
+					carElement.removeChild(container);
+				});
 		removeFocus(carElement);
 	}
 }
 
 export default function start() {
 	// todo: write a custom DOM-api. Like the focus functions.
-	document.querySelectorAll('.car, .player')
+	selectAll('.car, .player')
 			.forEach((carElement) => {
-				carElement.addEventListener('mouseover', () => addArrows(carElement as HTMLElement));
-				carElement.addEventListener('mouseleave', () => removeArrows(carElement as HTMLElement));
+				carElement.addEventListener('mouseover', () => addArrows(carElement));
+				carElement.addEventListener('mouseleave', () => removeArrows(carElement));
 			});
 }

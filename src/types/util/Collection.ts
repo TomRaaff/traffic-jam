@@ -59,6 +59,10 @@ export default class Collection<T> {
 		return this.collection.reduce(fn, initial);
 	}
 
+	forEach(fn: (a: T) => void): void {
+		return this.collection.forEach(fn);
+	}
+
 	static of<T>(array: Array<T>): Collection<T> {
 		return new Collection<T>(...array);
 	}

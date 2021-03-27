@@ -1,6 +1,4 @@
-import {
-	beforeEach, describe, expect, it,
-} from '@jest/globals';
+import { beforeEach, describe, expect, it, } from '@jest/globals';
 import { determineType, moveItem } from './app';
 import Direction from './types/Direction.enum';
 import GridItem from './types/GridItem';
@@ -66,11 +64,45 @@ describe('App', () => {
 	describe('MoveItem', () => {
 		it('should move the player to the left', () => {
 			// arrange
-			const inputGrid = defaultGrid.map(setType(22, Type.PLAYER));
-			const expected = inputGrid.map(setType(21, Type.PLAYER))
-									  .map(setType(22, Type.FREE));
+			const currentLocation = 22;
+			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
+			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
+									  .map(setType(21, Type.PLAYER));
 			// act
-			const newGrid = moveItem(2, Direction.LEFT, inputGrid);
+			const newGrid = moveItem(Type.PLAYER, currentLocation, Direction.LEFT, inputGrid);
+			// assert
+			expect(newGrid).toEqual(expected);
+		});
+		it('should move the player to the right', () => {
+			// arrange
+			const currentLocation = 22;
+			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
+			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
+									  .map(setType(23, Type.PLAYER));
+			// act
+			const newGrid = moveItem(Type.PLAYER, currentLocation, Direction.RIGHT, inputGrid);
+			// assert
+			expect(newGrid).toEqual(expected);
+		});
+		it('should move the player up', () => {
+			// arrange
+			const currentLocation = 22;
+			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
+			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
+									  .map(setType(12, Type.PLAYER));
+			// act
+			const newGrid = moveItem(Type.PLAYER, currentLocation, Direction.UP, inputGrid);
+			// assert
+			expect(newGrid).toEqual(expected);
+		});
+		it('should move the player down', () => {
+			// arrange
+			const currentLocation = 22;
+			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
+			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
+									  .map(setType(32, Type.PLAYER));
+			// act
+			const newGrid = moveItem(Type.PLAYER, currentLocation, Direction.DOWN, inputGrid);
 			// assert
 			expect(newGrid).toEqual(expected);
 		});
