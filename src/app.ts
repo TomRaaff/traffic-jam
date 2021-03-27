@@ -5,6 +5,13 @@ import Collection from './types/util/Collection';
 import Either from './types/util/Either';
 import Violation from './types/Violation.enum';
 
+const movement = {
+	up: -10,
+	right: 1,
+	left: -1,
+	down: 10,
+};
+
 export function determineType(classList: string[]): Type {
 	if (classList.includes(Type.PLAYER)) return Type.PLAYER;
 	if (classList.includes(Type.CAR)) return Type.CAR;
@@ -20,20 +27,11 @@ function setType(id: number, type: Type): (a: GridItem) => GridItem {
 	};
 }
 
-// todo: see whether movement is even possible
-function calcNextLocation(current: number, direction: Direction, currentGrid: Collection<GridItem>): Either<Violation, number> {
-	switch (direction) {
-	case Direction.UP:
-		return Either.of(current - 10);
-	case Direction.RIGHT:
-		return Either.of(current + 1);
-	case Direction.LEFT:
-		return Either.of(current - 1);
-	case Direction.DOWN:
-		return Either.of(current + 10);
-	default:
-		return Either.ofLeft(Violation.INVALID_INPUT);
-	}
+function nextLocation(locationId: number, direction: Direction, grid: Collection<GridItem>): Either<Violation, number> {
+	const nextLocationId = locationId + movement[direction];
+	return grid.findOne({ id: nextLocationId })
+			   .toEither(Violation.GRID_BOUNDRY_REACHED)
+			   .flatMap((gridItem) => ((gridItem.type === Type.FREE) ? Either.of(gridItem.id) : Either.ofLeft(Violation.BLOCKED_BY_CAR)));
 }
 
 export type MoveItemInput = {
@@ -44,8 +42,10 @@ export type MoveItemInput = {
 }
 
 export function moveItem(input: MoveItemInput): Either<Violation, Collection<GridItem>> {
-	const { locationId, currentGrid } = input;
-	return calcNextLocation(locationId, input.direction, currentGrid)
-			.map((nextLocation) => currentGrid.map(setType(locationId, Type.FREE))
-											  .map(setType(nextLocation, input.type)));
+	const { locationId, direction, currentGrid } = input;
+	return nextLocation(locationId, direction, currentGrid)
+			.map(
+				(location) => currentGrid.map(setType(locationId, Type.FREE))
+											 	 .map(setType(location, input.type)),
+			);
 }
