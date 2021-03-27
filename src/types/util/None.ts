@@ -1,9 +1,15 @@
 import Maybe from './Maybe';
 
 export default class None<T> {
-	map(fn: (t: T) => Maybe<any>) { return this; }
+	map<S>(fn: (t: T) => S): Maybe<S> {
+		return Maybe.empty();
+	}
 
-	flatMap(fn: (t: T) => any) { return this; }
+	flatMap<S>(fn: (t: T) => Maybe<S>): Maybe<S> {
+		return Maybe.empty();
+	}
 
-	fold(ifEmpty: () => void, fn: (t: T) => any) { return ifEmpty(); }
+	getOrElse(ifEmpty: () => undefined | void, fn: (t: T) => T): undefined | void {
+		return ifEmpty();
+	}
 }

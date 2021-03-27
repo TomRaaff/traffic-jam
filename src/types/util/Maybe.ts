@@ -5,20 +5,37 @@ export default class Maybe<T> {
 	private val: Some<T> | None<T>;
 
 	private constructor(input?: T | undefined) {
-		const value: T = (input instanceof Maybe)
-			? input.fold(() => undefined,
-					   (val: T) => val)
-			: input;
+		let value: T | undefined;
+		if (input) {
+			if (input instanceof Maybe) {
+				value = input.getOrElse(
+					() => undefined,
+					(val: T) => val,
+				);
+			} else {
+				value = input;
+			}
+		}
 		this.val = (value) ? new Some(value) : new None();
 	}
 
-	map(fn: (t: T) => Maybe<any>) { return this.val.map(fn); }
+	map<S>(fn: (t: T) => S): Maybe<S> {
+		return this.val.map(fn);
+	}
 
-	flatMap(fn: (t: T) => any) { return this.val.flatMap(fn); }
+	flatMap<S>(fn: (t: T) => Maybe<S>): Maybe<S> {
+		return this.val.flatMap(fn);
+	}
 
-	fold(ifEmpty: () => void, fn: (t: T) => any) { return this.val.fold(ifEmpty, fn); }
+	getOrElse(ifEmpty: () => undefined | void, fn: (t: T) => T): T | undefined | void {
+		return this.val.getOrElse(ifEmpty, fn);
+	}
 
-	static of<T>(val: T | undefined) { return new Maybe(val); }
+	static of<S>(val: S | undefined) {
+		return new Maybe<S>(val);
+	}
 
-	static empty<T>() { return new Maybe<T>(); }
+	static empty<S>() {
+		return new Maybe<S>();
+	}
 }
