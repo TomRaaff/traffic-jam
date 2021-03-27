@@ -1,5 +1,7 @@
-import { GridItem } from './types/DataTypes';
+import GridItem from './types/GridItem';
 import { determineType, moveItem } from './app';
+import Direction from './types/Direction.enum';
+import Collection from './types/util/Collection';
 
 // todo: fix eslint vs intellij formatter
 function readGrid(): GridItem[] {
@@ -15,10 +17,15 @@ function readGrid(): GridItem[] {
 				});
 }
 
-const clickArrow = function (direction: 'up' | 'down' | 'left' | 'right') {
+function getGridItemId(element: HTMLElement): number {
+	const idString = element.parentElement!.parentElement!.id;
+	return parseInt(idString, 10);
+}
+
+const clickArrow = function (direction: Direction) {
 	return (event: Event) => {
-		const gridId = (event.currentTarget as HTMLElement)?.parentNode?.parentElement?.id;
-		moveItem(direction, gridId, readGrid());
+		const gridId = getGridItemId((event.currentTarget as HTMLElement)!);
+		moveItem(gridId, direction, Collection.of(readGrid()));
 		// render(newGrid);
 	};
 };
@@ -54,10 +61,10 @@ function addArrows(carElement: HTMLElement) {
 		const arrowContainerTop = createElement('DIV', ['arrow-container', 'top']);
 		const arrowContainerCenter = createElement('DIV', ['arrow-container', 'center']);
 		const arrowContainerBottom = createElement('DIV', ['arrow-container', 'bottom']);
-		const up = createElement('DIV', ['up'], clickArrow('up'));
-		const down = createElement('DIV', ['down'], clickArrow('down'));
-		const left = createElement('DIV', ['left'], clickArrow('left'));
-		const right = createElement('DIV', ['right'], clickArrow('right'));
+		const up = createElement('DIV', [Direction.UP], clickArrow(Direction.UP));
+		const down = createElement('DIV', [Direction.DOWN], clickArrow(Direction.DOWN));
+		const left = createElement('DIV', [Direction.LEFT], clickArrow(Direction.LEFT));
+		const right = createElement('DIV', [Direction.RIGHT], clickArrow(Direction.RIGHT));
 		addChildren(arrowContainerTop, [up]);
 		addChildren(arrowContainerCenter, [left, right]);
 		addChildren(arrowContainerBottom, [down]);
@@ -67,7 +74,7 @@ function addArrows(carElement: HTMLElement) {
 
 function removeArrows(carElement: HTMLElement) {
 	if (hasFocus(carElement)) {
-		Array.from(document.getElementsByClassName('arrow-container'))
+		Array.from(document.querySelectorAll('.arrow-container'))
 			 .forEach((container) => {
 				 carElement.removeChild(container);
 			 });
