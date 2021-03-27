@@ -2,18 +2,37 @@ import GridItem from './types/GridItem';
 import { determineType, moveItem } from './app';
 import Direction from './types/Direction.enum';
 import Collection from './types/util/Collection';
-import { addChildren, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
+import { addChildren, clearClasses, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
 import Type from './types/Type.enum';
 
 // todo: fix eslint vs intellij formatter
-function readGrid(): GridItem[] {
-	return selectAll('[data-type="grid-item"]')
-			.map((item) => (
-					{
-						id: parseInt(item.id, 10),
-						type: determineType(getClassList(item)),
-					} as GridItem
-			));
+function isChanged(element: HTMLElement, type: Type): boolean {
+	return determineType(getClassList(element)) !== type;
+}
+
+function render(grid: Collection<GridItem>): void {
+	grid.forEach((gridItem) => {
+		const selector = `[id="${gridItem.id}"]`;
+		select(selector)
+				.fold(
+					() => console.error('could not find element for selector: ', selector),
+					(element) => {
+						if (isChanged(element, gridItem.type)) {
+							removeArrows(element);
+							element.removeEventListener('mouseover', () => addArrows(element));
+							element.removeEventListener('mouseleave', () => removeArrows(element));
+							clearClasses(element);
+
+							element.classList.add(gridItem.type);
+							if (gridItem.type !== Type.FREE) {
+								element.addEventListener('mouseover', () => addArrows(element));
+								element.addEventListener('mouseleave', () => removeArrows(element));
+							}
+						}
+						return element;
+					},
+				);
+	});
 }
 
 function getArrowParent(arrowElement: HTMLElement): HTMLElement {
@@ -25,26 +44,14 @@ function getGridItemId(element: HTMLElement): number {
 	return parseInt(idString, 10);
 }
 
-function isChanged(element: HTMLElement, type: Type): boolean {
-	return determineType(getClassList(element)) !== type;
-}
-
-function render(grid: Collection<GridItem>): void {
-	grid.forEach((gridItem) => {
-		const element = select(`[id="${gridItem.id}"]`)!;
-		if (isChanged(element, gridItem.type)) {
-			removeArrows(element);
-			element.removeEventListener('mouseover', () => addArrows(element));
-			element.removeEventListener('mouseleave', () => removeArrows(element));
-			element.className = '';
-
-			element.classList.add(gridItem.type);
-			if (gridItem.type !== Type.FREE) {
-				element.addEventListener('mouseover', () => addArrows(element));
-				element.addEventListener('mouseleave', () => removeArrows(element));
-			}
-		}
-	});
+function readGrid(): GridItem[] {
+	return selectAll('[data-type="grid-item"]')
+			.map((item) => (
+					{
+						id: parseInt(item.id, 10),
+						type: determineType(getClassList(item)),
+					} as GridItem
+			));
 }
 
 const clickArrow = function (direction: Direction) {
@@ -85,7 +92,6 @@ function removeArrows(carElement: HTMLElement) {
 }
 
 export default function start() {
-	// todo: write a custom DOM-api. Like the focus functions.
 	selectAll('.car, .player')
 			.forEach((carElement) => {
 				carElement.addEventListener('mouseover', () => addArrows(carElement));

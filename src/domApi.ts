@@ -1,5 +1,7 @@
-export function select(cssSelector: string): HTMLElement | null {
-	return document.querySelector(cssSelector) as HTMLElement;
+import Maybe from './types/util/Maybe';
+
+export function select(cssSelector: string): Maybe<HTMLElement> {
+	return Maybe.of(document.querySelector(cssSelector) as HTMLElement);
 }
 
 export function selectAll(cssSelector: string): HTMLElement[] {
@@ -8,6 +10,17 @@ export function selectAll(cssSelector: string): HTMLElement[] {
 
 export function getClassList(element: HTMLElement): string[] {
 	return Array.from(element.classList.values());
+}
+
+export function clearClasses(element: HTMLElement): boolean {
+	try {
+		// eslint-disable-next-line no-param-reassign
+		element.className = '';
+		return true;
+	} catch (e) {
+		console.error(e);
+		return false;
+	}
 }
 
 export function hasFocus(element: HTMLElement): boolean {
