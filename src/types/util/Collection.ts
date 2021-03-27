@@ -1,3 +1,5 @@
+import Maybe from './Maybe';
+
 export default class Collection<T> {
 	readonly collection: Array<T> = [];
 
@@ -27,20 +29,22 @@ export default class Collection<T> {
 		return this.collection.filter((item) => keys.every((key) => item[key] === seek[key]));
 	}
 
-	findOne(seek: Partial<T>): T | undefined {
+	findOne(seek: Partial<T>): Maybe<T> {
 		const keys = Object.keys(seek) as Array<keyof T>;
 
 		for (let i = 0; i < this.collection.length; i += 1) {
 			const item = this.collection[i];
 			if (keys.every((key) => item[key] === seek[key])) {
-				return item;
+				return Maybe.of(item);
 			}
 		}
-		return undefined;
+		return Maybe.empty();
 	}
 
 	contains(seek: Partial<T>): boolean {
-		return !!this.findOne(seek);
+		return this.findOne(seek)
+				   .map(Boolean)
+				   .getOrElse(() => false, (isPresent) => isPresent);
 	}
 
 	copy(): Collection<T> {
@@ -63,7 +67,7 @@ export default class Collection<T> {
 		return this.collection.forEach(fn);
 	}
 
-	static of<T>(array: Array<T>): Collection<T> {
-		return new Collection<T>(...array);
+	static of<S>(array: Array<S>): Collection<S> {
+		return new Collection<S>(...array);
 	}
 }

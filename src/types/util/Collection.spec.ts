@@ -102,14 +102,20 @@ describe('Collection', () => {
 		// act
 		const result = dataArray.findOne({ id: 0 });
 		// assert
-		expect(result).toEqual(expected);
+		result.getOrElse(
+			() => expect({} as Employee).toBeFalsy(),
+			(item) => expect(item).toEqual(expected),
+		);
 	});
 	it('.findOne() should return undefined when item not present', () => {
 		// arrange
 		// act
 		const result = dataArray.findOne({ id: 893987 });
 		// assert
-		expect(result).toEqual(undefined);
+		result.getOrElse(
+			() => expect({} as Employee).toBeTruthy(),
+			(item) => expect(item).toEqual(undefined),
+		);
 	});
 
 	it('.copy() should return a copy of the Collection', () => {

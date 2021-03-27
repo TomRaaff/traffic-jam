@@ -1,5 +1,6 @@
 import Some from './Some';
 import None from './None';
+import Either from './Either';
 
 export default class Maybe<T> {
 	private val: Some<T> | None<T>;
@@ -27,7 +28,7 @@ export default class Maybe<T> {
 		return this.val.flatMap(fn);
 	}
 
-	getOrElse(ifEmpty: () => undefined | void, fn: (t: T) => T): T | undefined | void {
+	getOrElse<S>(ifEmpty: () => S, fn: (t: T) => S): S {
 		return this.val.getOrElse(ifEmpty, fn);
 	}
 
@@ -37,5 +38,9 @@ export default class Maybe<T> {
 
 	static empty<S>() {
 		return new Maybe<S>();
+	}
+
+	toEither<L>(left: L): Either<L, T> {
+		return this.val.getOrElse(() => Either.ofLeft(left), (value) => Either.of(value));
 	}
 }

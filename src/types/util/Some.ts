@@ -11,5 +11,7 @@ export default class Some<T> {
 		return fn(this.val);
 	}
 
-	getOrElse(ifEmpty: () => undefined | void, fn: (t: T) => T): T { return fn(this.val); }
+	getOrElse<S>(ifEmpty: () => S, fn: (t: T) => S): S {
+		return fn(this.val);
+	}
 }
