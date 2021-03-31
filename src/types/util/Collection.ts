@@ -67,7 +67,16 @@ export default class Collection<T> {
 		return this.collection.forEach(fn);
 	}
 
+	toArray(): T[] {
+		return this.collection;
+	}
+
 	static of<S>(array: Array<S>): Collection<S> {
 		return new Collection<S>(...array);
+	}
+
+	static empty<S>(): Collection<S> {
+		const arr: S[] = [];
+		return Collection.of(arr);
 	}
 }

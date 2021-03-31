@@ -1,11 +1,20 @@
 /* eslint-disable class-methods-use-this */
+import Color from './Color.enum';
+import Collection from './util/Collection';
+import Type from './Type.enum';
+
 export default class Car {
-	constructor(public readonly type: 'player' | 'car',
-				public readonly gridIds: number[],
+	readonly gridIds: Collection<number>;
+
+	constructor(public readonly id: number,
+				public readonly type: Type.PLAYER | Type.CAR,
+				public readonly color: Color,
+				public readonly ids: number[],
 				public readonly alignment?: 'horizontal' | 'vertical') {
-		if (gridIds.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
-		if (!this.hasValidGridIds(gridIds)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${gridIds}`);
-		this.alignment = this.determineAlignment(gridIds);
+		if (ids.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
+		if (!this.hasValidGridIds(ids)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${ids}`);
+		this.alignment = this.determineAlignment(ids);
+		this.gridIds = Collection.of(ids);
 	}
 
 	private determineAlignment(gridIds: number[]): 'horizontal' | 'vertical' {

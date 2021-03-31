@@ -5,6 +5,7 @@ import Collection from './types/util/Collection';
 import { addChildren, clearClasses, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
 import Type from './types/Type.enum';
 import Violation from './types/Violation.enum';
+import buildLevel from './levelBuilder';
 
 // todo: fix eslint vs intellij formatter
 function isChanged(element: HTMLElement, type: Type): boolean {
@@ -47,7 +48,7 @@ function renderViolation(violation: Violation): void {
 						() => {
 							element.classList.remove('show');
 						},
-						2000,
+						3000,
 					);
 				},
 			);
@@ -63,7 +64,7 @@ function getGridItemId(element: HTMLElement): number {
 }
 
 function readGrid(): GridItem[] {
-	return selectAll('[data-type="grid-item"]')
+	return selectAll('div.free, div.car, div.player')
 			.map((item) => (
 					{
 						id: parseInt(item.id, 10),
@@ -72,7 +73,7 @@ function readGrid(): GridItem[] {
 			));
 }
 
-const clickArrow = function (direction: Direction): (e: Event) => void {
+function clickArrow(direction: Direction): (e: Event) => void {
 	return (event: Event): void => {
 		const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
 		moveItem({
@@ -86,7 +87,7 @@ const clickArrow = function (direction: Direction): (e: Event) => void {
 					renderGrid,
 				);
 	};
-};
+}
 
 function addArrows(carElement: HTMLElement) {
 	if (!hasFocus(carElement)) {
@@ -115,7 +116,13 @@ function removeArrows(carElement: HTMLElement) {
 	}
 }
 
+/*
+	Todo:
+		- Fix the car colors
+		- Fix that when a car moves, it should move all of its parts
+ */
 export default function start() {
+	buildLevel(0);
 	selectAll('.car, .player')
 			.forEach((carElement) => {
 				carElement.addEventListener('mouseover', () => addArrows(carElement));
