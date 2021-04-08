@@ -2,12 +2,14 @@
 enum Color {
 	YELLOW = 'yellow',
 	ORANGE = 'orange',
+	GRAPEFRUIT = 'grapefruit',
 	RED = 'red',
 	PURPLE = 'purple',
 	PINK = 'pink',
 	BLUE = 'blue',
+	MARINE = 'marine',
 	GREEN = 'green',
-	GREY = 'grey'
+	LIME = 'lime'
 }
 
 export default Color;
