@@ -35,7 +35,11 @@ const levels = [
 function carsToGridItems(level: Collection<Car>): Collection<GridItem> {
 	const carGridItems = Collection.empty<GridItem>();
 	level.forEach((car: Car) => {
-		const gridItems = car.ids.map((id) => ({ id, type: car.type, car } as GridItem));
+		const gridItems = car.ids.map((id) => ({
+			id,
+			type: car.type,
+			car
+		} as GridItem));
 		carGridItems.push(...gridItems);
 	});
 	return carGridItems;
@@ -44,10 +48,13 @@ function carsToGridItems(level: Collection<Car>): Collection<GridItem> {
 function createLevel(level: number): GridItem[] {
 	const carGridItems = carsToGridItems(levels[level]);
 	return ids.map((id) => carGridItems.findOne({ id })
-									   		   .getOrElse(
-									   				   () => ({ id, type: Type.FREE } as GridItem),
-													   (gridItem) => gridItem,
-									   		   ));
+									   .getOrElse(
+											   () => ({
+												   id,
+												   type: Type.FREE
+											   } as GridItem),
+											   (gridItem) => gridItem,
+									   ));
 }
 
 function toHTMLDiv(gridItem: GridItem): HTMLElement {
@@ -61,7 +68,8 @@ function toHTMLDiv(gridItem: GridItem): HTMLElement {
 export default function buildLevel(index: number): void {
 	select('section.car-grid')
 			.getOrElse(
-				() => console.error('could not find the car grid'),
-				(gridContainer) => addChildren(gridContainer, createLevel(index).map(toHTMLDiv)),
+					() => console.error('could not find the car grid'),
+					(gridContainer) => addChildren(gridContainer, createLevel(index)
+							.map(toHTMLDiv)),
 			);
 }

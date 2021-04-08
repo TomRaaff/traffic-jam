@@ -7,7 +7,6 @@ import Type from './types/Type.enum';
 import Violation from './types/Violation.enum';
 import buildLevel from './levelBuilder';
 
-// todo: fix eslint vs intellij formatter
 function isChanged(element: HTMLElement, type: Type): boolean {
 	return determineType(getClassList(element)) !== type;
 }
@@ -17,22 +16,22 @@ function renderGrid(grid: Collection<GridItem>): void {
 		const selector = `[id="${gridItem.id}"]`;
 		select(selector)
 				.getOrElse(
-					() => console.error('could not find element for selector: ', selector),
-					(element) => {
-						if (isChanged(element, gridItem.type)) {
-							removeArrows(element);
-							element.removeEventListener('mouseover', () => addArrows(element));
-							element.removeEventListener('mouseleave', () => removeArrows(element));
-							clearClasses(element);
+						() => console.error('could not find element for selector: ', selector),
+						(element) => {
+							if (isChanged(element, gridItem.type)) {
+								removeArrows(element);
+								element.removeEventListener('mouseover', () => addArrows(element));
+								element.removeEventListener('mouseleave', () => removeArrows(element));
+								clearClasses(element);
 
-							element.classList.add(gridItem.type);
-							if (gridItem.type !== Type.FREE) {
-								element.addEventListener('mouseover', () => addArrows(element));
-								element.addEventListener('mouseleave', () => removeArrows(element));
+								element.classList.add(gridItem.type);
+								if (gridItem.type !== Type.FREE) {
+									element.addEventListener('mouseover', () => addArrows(element));
+									element.addEventListener('mouseleave', () => removeArrows(element));
+								}
 							}
-						}
-						return element;
-					},
+							return element;
+						},
 				);
 	});
 }
@@ -40,17 +39,17 @@ function renderGrid(grid: Collection<GridItem>): void {
 function renderViolation(violation: Violation): void {
 	select('.popup')
 			.getOrElse(
-				() => console.error('could not find class .popup'),
-				(element) => {
-					element.classList.add('show');
-					element.innerText = violation;
-					setTimeout(
-						() => {
-							element.classList.remove('show');
-						},
-						3000,
-					);
-				},
+					() => console.error('could not find class .popup'),
+					(element) => {
+						element.classList.add('show');
+						element.innerText = violation;
+						setTimeout(
+								() => {
+									element.classList.remove('show');
+								},
+								3000,
+						);
+					},
 			);
 }
 
@@ -77,14 +76,14 @@ function clickArrow(direction: Direction): (e: Event) => void {
 	return (event: Event): void => {
 		const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
 		moveItem({
-			type: determineType(getClassList(arrowParent)),
-			locationId: getGridItemId(arrowParent),
-			direction,
-			currentGrid: Collection.of(readGrid()),
-		})
+					 type: determineType(getClassList(arrowParent)),
+					 locationId: getGridItemId(arrowParent),
+					 direction,
+					 currentGrid: Collection.of(readGrid()),
+				 })
 				.leftOrRight(
-					renderViolation,
-					renderGrid,
+						renderViolation,
+						renderGrid,
 				);
 	};
 }
@@ -117,9 +116,8 @@ function removeArrows(carElement: HTMLElement) {
 }
 
 /*
-	Todo:
-		- Fix the car colors
-		- Fix that when a car moves, it should move all of its parts
+ Todo:
+ - Fix that when a car moves, it should move all of its parts
  */
 export default function start() {
 	buildLevel(0);

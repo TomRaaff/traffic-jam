@@ -42,10 +42,14 @@ export type MoveItemInput = {
 }
 
 export function moveItem(input: MoveItemInput): Either<Violation, Collection<GridItem>> {
-	const { locationId, direction, currentGrid } = input;
+	const {
+		locationId,
+		direction,
+		currentGrid
+	} = input;
 	return nextLocation(locationId, direction, currentGrid)
 			.map(
-				(location) => currentGrid.map(setType(locationId, Type.FREE))
-											 	 .map(setType(location, input.type)),
+					(location) => currentGrid.map(setType(locationId, Type.FREE))
+											 .map(setType(location, input.type)),
 			);
 }
