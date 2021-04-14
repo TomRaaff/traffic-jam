@@ -16,26 +16,37 @@ beforeEach(() => {
 		{ id: 13, type: Type.FREE },
 		{ id: 14, type: Type.FREE },
 		{ id: 15, type: Type.FREE },
+		{ id: 16, type: Type.FREE },
 		{ id: 21, type: Type.FREE },
 		{ id: 22, type: Type.FREE },
 		{ id: 23, type: Type.FREE },
 		{ id: 24, type: Type.FREE },
 		{ id: 25, type: Type.FREE },
+		{ id: 26, type: Type.FREE },
 		{ id: 31, type: Type.FREE },
 		{ id: 32, type: Type.FREE },
 		{ id: 33, type: Type.FREE },
 		{ id: 34, type: Type.FREE },
 		{ id: 35, type: Type.FREE },
+		{ id: 36, type: Type.FREE },
 		{ id: 41, type: Type.FREE },
 		{ id: 42, type: Type.FREE },
 		{ id: 43, type: Type.FREE },
 		{ id: 44, type: Type.FREE },
 		{ id: 45, type: Type.FREE },
+		{ id: 46, type: Type.FREE },
 		{ id: 51, type: Type.FREE },
 		{ id: 52, type: Type.FREE },
 		{ id: 53, type: Type.FREE },
 		{ id: 54, type: Type.FREE },
 		{ id: 55, type: Type.FREE },
+		{ id: 56, type: Type.FREE },
+		{ id: 61, type: Type.FREE },
+		{ id: 62, type: Type.FREE },
+		{ id: 63, type: Type.FREE },
+		{ id: 64, type: Type.FREE },
+		{ id: 65, type: Type.FREE },
+		{ id: 66, type: Type.FREE },
 	];
 	defaultGrid = Collection.of(gridItems);
 });
@@ -48,6 +59,7 @@ function setType(id: number, type: Type): (a: GridItem) => GridItem {
 		return gridItem;
 	};
 }
+
 describe('App', () => {
 	describe('determineType', () => {
 		it('should return player', () => {
@@ -65,7 +77,7 @@ describe('App', () => {
 	});
 
 	describe('MoveItem', () => {
-		describe('should move the player', () => {
+		describe('should move the a car', () => {
 			it('to the left', () => {
 				// arrange
 				const currentLocation = 22;

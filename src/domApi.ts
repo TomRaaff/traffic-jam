@@ -1,11 +1,12 @@
 import Maybe from './types/util/Maybe';
+import Collection from './types/util/Collection';
 
 export function select(cssSelector: string): Maybe<HTMLElement> {
 	return Maybe.of(document.querySelector(cssSelector) as HTMLElement);
 }
 
-export function selectAll(cssSelector: string): HTMLElement[] {
-	return Array.from(document.querySelectorAll(cssSelector));
+export function selectAll(cssSelector: string): Collection<HTMLElement> {
+	return Collection.of(Array.from(document.querySelectorAll(cssSelector)));
 }
 
 export function getClassList(element: HTMLElement): string[] {
@@ -44,7 +45,7 @@ export function createElement(type: string, classes: string[], clickListener?: (
 	return element;
 }
 
-export function addChildren(parent: HTMLElement, children: HTMLElement[]): void {
+export function addChildren(parent: HTMLElement, children: HTMLElement[] | Collection<HTMLElement>): void {
 	children.forEach((child) => {
 		parent.appendChild(child);
 	});

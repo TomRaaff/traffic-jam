@@ -7,7 +7,7 @@ export default class Car {
 	readonly gridIds: Collection<number>;
 
 	constructor(public readonly id: number,
-				public readonly type: Type.PLAYER | Type.CAR,
+				public readonly type: Type,
 				public readonly color: Color,
 				public readonly ids: number[],
 				public readonly alignment?: 'horizontal' | 'vertical') {

@@ -1,10 +1,11 @@
 import Type from './Type.enum';
-import Car from './Car';
+import Color from './Color.enum';
 
 type GridItem = {
 	id: number;
 	type: Type;
-	car?: Car;
+	carId?: number;
+	color?: Color
 }
 
 export default GridItem;
