@@ -38,7 +38,7 @@ export function removeFocus(element: HTMLElement): void {
 
 export function createElement(type: string, classes: string[], clickListener?: (ev: MouseEvent) => any): HTMLElement {
 	const element = document.createElement(type.toUpperCase());
-	classes.forEach((c) => element.classList.add(c));
+	element.classList.add(...classes);
 	if (clickListener) {
 		element.addEventListener('click', clickListener);
 	}

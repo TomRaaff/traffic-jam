@@ -5,7 +5,7 @@ import Either from './Either';
 export default class Maybe<T> {
 	private val: Some<T> | None<T>;
 
-	private constructor(input?: T | undefined) {
+	private constructor(input?: T | undefined | null) {
 		let value: T | undefined;
 		if (input) {
 			if (input instanceof Maybe) {

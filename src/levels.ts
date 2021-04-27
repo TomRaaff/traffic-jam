@@ -3,7 +3,7 @@ import Type from './types/Type.enum';
 import Car from './types/Car';
 import Color from './types/Color.enum';
 import GridItem from './types/GridItem';
-import { putCarsOnTheGrid } from './app';
+import { carsToGrid } from './app';
 
 /*
 	grid ids:
@@ -33,5 +33,5 @@ export const levels = [
 ];
 
 export function buildLevel(level: number): Collection<GridItem> {
-	return putCarsOnTheGrid(levels[level]);
+	return carsToGrid(levels[level]);
 }

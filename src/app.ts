@@ -5,6 +5,7 @@ import Collection from './types/util/Collection';
 import Either from './types/util/Either';
 import Violation from './types/Violation.enum';
 import Car from './types/Car';
+import { Movement } from './types/Movement';
 
 const movement = {
 	up: -10,
@@ -54,13 +55,44 @@ export function moveItem(input: MoveItemInput): Either<Violation, Collection<Gri
 			);
 }
 
+// TODO implement this
+export function moveCar(movement: Movement, cars: Collection<Car>): Either<Violation, Collection<Car>> {
+	console.log('move', movement, 'cars', cars);
+	return Either.of(cars);
+}
+
+export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
+	const cars = Collection.empty<Car>();
+	grid.forEach(gridItem => {
+		// make sure the cars contain the right id's
+		cars.findOne({ id: gridItem.carId! })
+				// Either a new car (L) or the found result(R)
+			.toEither(new Car(gridItem.carId!,
+							  gridItem.type,
+							  gridItem.color!,
+							  []))
+			.leftOrRight(
+					// if new car
+					(car) => {
+						car.gridIds.push(gridItem.id);
+						cars.push(car);
+					},
+					// if existing car
+					(car) => {
+						car.gridIds.push(gridItem.id);
+					}
+			);
+	});
+	return cars;
+}
+
 function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = Collection.empty<GridItem>();
 	cars.forEach((car: Car) => {
-		const gridItems: GridItem[] = car.ids.map((id) => ({
-			id,
+		const gridItems: GridItem[] = car.ids.map((gridId) => ({
+			id: gridId,
 			type: car.type,
-			carId: id,
+			carId: car.id,
 			color: car.color
 		}));
 		carGridItems.push(...gridItems);
@@ -68,7 +100,7 @@ function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 	return carGridItems;
 }
 
-export function putCarsOnTheGrid(cars: Collection<Car>): Collection<GridItem> {
+export function carsToGrid(cars: Collection<Car>): Collection<GridItem> {
 	const ids = Collection.of([
 								  11, 12, 13, 14, 15, 16,
 								  21, 22, 23, 24, 25, 26,

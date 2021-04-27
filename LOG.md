@@ -21,7 +21,7 @@ d.m.v. de pijltjes, alleen het probleem was dat de blokjes alleen
 maar konden verschuiven als enkel blokje. En voor de app is het een requirement
 om auto's van meerdere blokjes groot te hebben. En dat die alleen maar horizontaal
 of vertikaal kunnen bewegen. 
-Hiervoor heb ik het hele lees en schrijf proces moeten omgooien. 
+Hiervoor heb ik het hele lees- en schrijf-proces moeten omgooien. 
 Nu wordt er eerst een Collection<GridItem> gelezen. Die wordt vervolgens naar een 
 Collection<Car> gemapt. De business rules voor of een auto mag bewegen moet nog 
 herschreven worden. Daarna wordt de lijst aan auto's weer terug gemapt naar een 
@@ -31,6 +31,10 @@ Kortom: bijna alle state van de app bevind zich in de HTML.
 
 TODO:
 - mag wel/niet verplaatsen logica refactoren
-- zorgen dat een auto al zijn blokjes mee beweegt
+- zorgen dat een auto al zijn blokjes meebeweegt
 - tests fixen
 - pijltjes in de correcte directie fixen.
+
+#### 21 April
+functionaliteit toegevoegd om een grid naar een lijst van auto's toe te mappen
+

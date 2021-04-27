@@ -3,113 +3,48 @@ import Collection from './types/util/Collection';
 import { addChildren, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
 import Car from './types/Car';
 import { buildLevel } from './levels';
-import { putCarsOnTheGrid } from './app';
+import { gridToCars, moveCar, carsToGrid } from './app';
 import GridItem from './types/GridItem';
 import Type from './types/Type.enum';
 import Color from './types/Color.enum';
+import { Movement } from './types/Movement';
+import Violation from './types/Violation.enum';
 
-// function isChanged(element: HTMLElement, type: Type): boolean {
-// 	return determineType(getClassList(element)) !== type;
-// }
-//
-// function renderGrid(grid: Collection<GridItem>): void {
-// 	grid.forEach((gridItem) => {
-// 		const selector = `[id="${gridItem.id}"]`;
-// 		select(selector)
-// 				.map((element) => {
-// 						 if (isChanged(element, gridItem.type)) {
-// 							 removeArrows(element);
-// 							 element.removeEventListener('mouseover', () => addArrows(element));
-// 							 element.removeEventListener('mouseleave', () => removeArrows(element));
-// 							 clearClasses(element);
-//
-// 							 element.classList.add(gridItem.type);
-// 							 if (gridItem.type !== Type.FREE) {
-// 								 element.addEventListener('mouseover', () => addArrows(element));
-// 								 element.addEventListener('mouseleave', () => removeArrows(element));
-// 							 }
-// 						 }
-// 						 return element;
-// 					 },
-// 				);
-// 	});
-// }
-//
-// function renderViolation(violation: Violation): void {
-// 	select('.popup')
-// 			.map((element) => {
-// 					 element.classList.add('show');
-// 					 element.innerText = violation;
-// 					 setTimeout(
-// 							 () => {
-// 								 element.classList.remove('show');
-// 							 },
-// 							 3000,
-// 					 );
-// 				 },
-// 			);
-// }
-//
-// function getArrowParent(arrowElement: HTMLElement): HTMLElement {
-// 	return arrowElement.parentElement!.parentElement!;
-// }
-//
-// function getGridItemId(element: HTMLElement): number {
-// 	const idString = element.id;
-// 	return parseInt(idString, 10);
-// }
+function renderViolation(violation: Violation): void {
+	select('.popup')
+			.map((element) => {
+					 element.classList.add('show');
+					 element.innerText = violation;
+					 setTimeout(
+							 () => {
+								 element.classList.remove('show');
+							 },
+							 3000,
+					 );
+				 },
+			);
+}
 
-// function readGrid(): Collection<GridItem> {
-// 	return selectAll('div.free, div.car, div.player')
-// 			.map((item) => (
-// 					{
-// 						id: parseInt(item.id, 10),
-// 						type: determineType(getClassList(item)),
-// 					} as GridItem
-// 			));
-// }
+function getCarElement(arrowElement: HTMLElement): HTMLElement {
+	return arrowElement.parentElement!.parentElement!;
+}
 
 function readCars(): Collection<Car> {
-	const cars = Collection.empty<Car>();
-	selectAll('[data-car-id]')
-			.map(element => toGridItem(element))
-			.forEach(gridItem => {
-				cars.findOne({ id: gridItem.carId! })
-					.toEither(new Car(gridItem.carId!,
-									  gridItem.type,
-									  gridItem.color!,
-									  []))
-					.leftOrRight(
-							(car) => {
-								car.gridIds.push(gridItem.id);
-								cars.push(car);
-							},
-							(car) => {
-								car.gridIds.push(gridItem.id);
-							}
-					);
-			});
-	return cars;
+	const grid = selectAll('[data-car-id]')
+			.map(element => toGridItem(element));
+	return gridToCars(grid);
 }
 
 function clickArrow(direction: Direction): (e: Event) => void {
-	return (event: Event): void => {
-		// const arrowParent = getArrowParent(event.currentTarget as HTMLElement);
-		const cars = readCars();
-		console.log(cars);
-		renderGrid(putCarsOnTheGrid(cars));
-		// TODO: what of the following function can I reuse?
-		//		beware: by commenting out and auto-formatting, all imports are gone.
-		// moveItem({
-		// 			 type: determineType(getClassList(arrowParent)),
-		// 			 locationId: getGridItemId(arrowParent),
-		// 			 direction,
-		// 			 currentGrid: readGrid(),
-		// 		 })
-		// 		.leftOrRight(
-		// 				renderViolation,
-		// 				renderGrid,
-		// 		);
+	return ({ currentTarget }): void => {
+		const gridItem = toGridItem(getCarElement(currentTarget as HTMLElement));
+		const movement = { carId: gridItem.carId, direction } as Movement;
+		moveCar(movement, readCars())
+				.map(carsToGrid)
+				.leftOrRight(
+						renderViolation,
+						renderGrid
+				);
 	};
 }
 
@@ -144,7 +79,7 @@ function removeArrows(carElement: HTMLElement) {
 //  create two subclasses for gridItem: CarGridItem and FreeGridItem
 //  this way, you don't have to deal with the optional parameters.
 /*
-reads from div-elements that look like this:
+ reads from div-elements that look like this:
  <div class='car|player color' id='number' data-car-id='number'>
  or
  <div class='free' id='number'>
@@ -192,5 +127,5 @@ function renderGrid(grid: Collection<GridItem>) {
  - Fix that when a car moves, it should move all of its parts
  */
 export default function start() {
-	renderGrid(buildLevel(0))
+	renderGrid(buildLevel(0));
 }
