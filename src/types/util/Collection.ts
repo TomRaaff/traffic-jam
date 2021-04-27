@@ -47,6 +47,14 @@ export default class Collection<T> {
 				   .getOrElse(() => false, (isPresent) => isPresent);
 	}
 
+	update(seek: Partial<T>, update: T): boolean {
+		return this.findOne(seek)
+				   .map((item) => this.pull(item))
+				   .map(() => this.push(update))
+				   .getOrElse(() => false,
+							  (isUpdated) => isUpdated);
+	}
+
 	copy(): Collection<T> {
 		return Collection.of([...this.collection]);
 	}

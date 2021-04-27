@@ -9,7 +9,7 @@ export default class Car {
 	constructor(public readonly id: number,
 				public readonly type: Type,
 				public readonly color: Color,
-				public readonly ids: number[],
+				readonly ids: number[],
 				public readonly alignment?: 'horizontal' | 'vertical') {
 		if (ids.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
 		if (!this.hasValidGridIds(ids)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${ids}`);
@@ -31,5 +31,13 @@ export default class Car {
 								   },
 								   gridIds[0] - 1);
 		return (num !== 0);
+	}
+
+	copy(newFields: Partial<Car>): Car {
+		return new Car(newFields.id || this.id,
+					   newFields.type || this.type,
+					   newFields.color || this.color,
+					   newFields.gridIds?.toArray() || newFields.ids || this.gridIds.toArray(),
+					   newFields.alignment || undefined);
 	}
 }

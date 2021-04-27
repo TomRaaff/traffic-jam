@@ -120,6 +120,7 @@ function renderGrid(grid: Collection<GridItem>) {
 			.map(gridContainer => addChildren(gridContainer,
 											  grid.map(toHTMLDiv))
 			);
+	console.log('rendered');
 }
 
 /*

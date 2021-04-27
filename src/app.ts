@@ -7,57 +7,65 @@ import Violation from './types/Violation.enum';
 import Car from './types/Car';
 import { Movement } from './types/Movement';
 
-const movement = {
-	up: -10,
-	right: 1,
-	left: -1,
-	down: 10,
-};
+// export function determineType(classList: string[]): Type {
+// 	if (classList.includes(Type.PLAYER)) return Type.PLAYER;
+// 	if (classList.includes(Type.CAR)) return Type.CAR;
+// 	return Type.FREE;
+// }
+//
+// function setType(id: number, type: Type): (a: GridItem) => GridItem {
+// 	return (gridItem: GridItem) => {
+// 		if (gridItem.id === id) {
+// 			return { id, type };
+// 		}
+// 		return gridItem;
+// 	};
+// }
+//
+// function nextLocation(locationId: number, direction: Direction, grid: Collection<GridItem>): Either<Violation, number> {
+// 	const nextLocationId = locationId + movement[direction];
+// 	return grid.findOne({ id: nextLocationId })
+// 			   .toEither(Violation.GRID_BOUNDRY_REACHED)
+// 			   .flatMap((gridItem) => ((gridItem.type === Type.FREE) ? Either.of(gridItem.id) : Either.ofLeft(Violation.BLOCKED_BY_CAR)));
+// }
+//
+// export type MoveItemInput = {
+// 	type: Type;
+// 	locationId: number;
+// 	direction: Direction;
+// 	currentGrid: Collection<GridItem>;
+// }
+//
+// export function moveItem(input: MoveItemInput): Either<Violation, Collection<GridItem>> {
+// 	const {
+// 		locationId,
+// 		direction,
+// 		currentGrid
+// 	} = input;
+// 	return nextLocation(locationId, direction, currentGrid)
+// 			.map((location) => currentGrid.map(setType(locationId, Type.FREE))
+// 										  .map(setType(location, input.type))
+// 			);
+// }
 
-export function determineType(classList: string[]): Type {
-	if (classList.includes(Type.PLAYER)) return Type.PLAYER;
-	if (classList.includes(Type.CAR)) return Type.CAR;
-	return Type.FREE;
-}
-
-function setType(id: number, type: Type): (a: GridItem) => GridItem {
-	return (gridItem: GridItem) => {
-		if (gridItem.id === id) {
-			return { id, type };
-		}
-		return gridItem;
+function determineNextLocation(car: Car, direction: Direction): number[] {
+	const movement = {
+		up: -10,
+		right: 1,
+		left: -1,
+		down: 10,
 	};
-}
-
-function nextLocation(locationId: number, direction: Direction, grid: Collection<GridItem>): Either<Violation, number> {
-	const nextLocationId = locationId + movement[direction];
-	return grid.findOne({ id: nextLocationId })
-			   .toEither(Violation.GRID_BOUNDRY_REACHED)
-			   .flatMap((gridItem) => ((gridItem.type === Type.FREE) ? Either.of(gridItem.id) : Either.ofLeft(Violation.BLOCKED_BY_CAR)));
-}
-
-export type MoveItemInput = {
-	type: Type;
-	locationId: number;
-	direction: Direction;
-	currentGrid: Collection<GridItem>;
-}
-
-export function moveItem(input: MoveItemInput): Either<Violation, Collection<GridItem>> {
-	const {
-		locationId,
-		direction,
-		currentGrid
-	} = input;
-	return nextLocation(locationId, direction, currentGrid)
-			.map((location) => currentGrid.map(setType(locationId, Type.FREE))
-										  .map(setType(location, input.type))
-			);
+	return car.gridIds
+			  .map((gridId) => gridId + movement[direction])
+			  .toArray();
 }
 
 // TODO implement this
 export function moveCar(movement: Movement, cars: Collection<Car>): Either<Violation, Collection<Car>> {
-	console.log('move', movement, 'cars', cars);
+	const [car] = cars.find({ id: movement.carId });
+	console.log(determineNextLocation(car, movement.direction));
+	let newCar = car.copy({ids: determineNextLocation(car, movement.direction)});
+	cars.update({id:car.id}, newCar);
 	return Either.of(cars);
 }
 
@@ -89,13 +97,13 @@ export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
 function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = Collection.empty<GridItem>();
 	cars.forEach((car: Car) => {
-		const gridItems: GridItem[] = car.ids.map((gridId) => ({
+		const gridItems: Collection<GridItem> = car.gridIds.map((gridId) => ({
 			id: gridId,
 			type: car.type,
 			carId: car.id,
 			color: car.color
 		}));
-		carGridItems.push(...gridItems);
+		gridItems.forEach(item => carGridItems.push(item));
 	});
 	return carGridItems;
 }
