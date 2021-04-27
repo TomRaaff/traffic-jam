@@ -11,6 +11,7 @@ export default class Car {
 				public readonly color: Color,
 				readonly ids: number[],
 				public readonly alignment?: 'horizontal' | 'vertical') {
+		if (id === 0) throw new Error('Car can not have id: 0');
 		if (ids.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
 		if (!this.hasValidGridIds(ids)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${ids}`);
 		this.alignment = this.determineAlignment(ids);

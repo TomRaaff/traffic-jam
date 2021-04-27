@@ -64,8 +64,8 @@ function determineNextLocation(car: Car, direction: Direction): number[] {
 export function moveCar(movement: Movement, cars: Collection<Car>): Either<Violation, Collection<Car>> {
 	const [car] = cars.find({ id: movement.carId });
 	console.log(determineNextLocation(car, movement.direction));
-	let newCar = car.copy({ids: determineNextLocation(car, movement.direction)});
-	cars.update({id:car.id}, newCar);
+	let newCar = car.copy({ ids: determineNextLocation(car, movement.direction) });
+	cars.update({ id: car.id }, newCar);
 	return Either.of(cars);
 }
 
@@ -118,9 +118,11 @@ export function carsToGrid(cars: Collection<Car>): Collection<GridItem> {
 								  61, 62, 63, 64, 65, 66,
 							  ]);
 	const carGridItems = carsToGridItems(cars);
-	return ids.map((id) => carGridItems.findOne({ id })
-									   .getOrElse(
-											   () => ({ id, type: Type.FREE } as GridItem),
-											   (gridItem) => gridItem,
-									   ));
+	return ids.map((id) => {
+		return carGridItems.findOne({ id })
+						   .getOrElse(
+								   () => ({ id, type: Type.FREE } as GridItem),
+								   (gridItem) => gridItem,
+						   );
+	});
 }

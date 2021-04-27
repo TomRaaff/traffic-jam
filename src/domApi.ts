@@ -45,6 +45,13 @@ export function createElement(type: string, classes: string[], clickListener?: (
 	return element;
 }
 
+export function removeChildren(parent: HTMLElement): HTMLElement {
+	while(parent.firstChild && parent.lastChild) {
+		parent.removeChild(parent.lastChild);
+	}
+	return parent;
+}
+
 export function addChildren(parent: HTMLElement, children: HTMLElement[] | Collection<HTMLElement>): void {
 	children.forEach((child) => {
 		parent.appendChild(child);

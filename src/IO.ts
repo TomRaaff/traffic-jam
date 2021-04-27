@@ -1,6 +1,6 @@
 import Direction from './types/Direction.enum';
 import Collection from './types/util/Collection';
-import { addChildren, createElement, focus, getClassList, hasFocus, removeFocus, select, selectAll } from './domApi';
+import { addChildren, createElement, focus, getClassList, hasFocus, removeChildren, removeFocus, select, selectAll } from './domApi';
 import Car from './types/Car';
 import { buildLevel } from './levels';
 import { gridToCars, moveCar, carsToGrid } from './app';
@@ -75,9 +75,6 @@ function removeArrows(carElement: HTMLElement) {
 	}
 }
 
-// TODO
-//  create two subclasses for gridItem: CarGridItem and FreeGridItem
-//  this way, you don't have to deal with the optional parameters.
 /*
  reads from div-elements that look like this:
  <div class='car|player color' id='number' data-car-id='number'>
@@ -117,10 +114,10 @@ function toHTMLDiv(gridItem: GridItem): HTMLElement {
 
 function renderGrid(grid: Collection<GridItem>) {
 	select('section.car-grid')
+			.map(removeChildren)
 			.map(gridContainer => addChildren(gridContainer,
 											  grid.map(toHTMLDiv))
 			);
-	console.log('rendered');
 }
 
 /*
