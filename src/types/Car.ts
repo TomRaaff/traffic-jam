@@ -4,18 +4,18 @@ import Collection from './util/Collection';
 import Type from './Type.enum';
 
 export default class Car {
-	readonly gridIds: Collection<number>;
+	readonly coordinates: Collection<number>;
 
 	constructor(public readonly id: number,
 				public readonly type: Type,
 				public readonly color: Color,
-				readonly ids: number[],
+				readonly gridIds: number[],
 				public readonly alignment?: 'horizontal' | 'vertical') {
 		if (id === 0) throw new Error('Car can not have id: 0');
-		if (ids.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
-		if (!this.hasValidGridIds(ids)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${ids}`);
-		this.alignment = this.determineAlignment(ids);
-		this.gridIds = Collection.of(ids);
+		if (gridIds.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
+		if (!this.hasValidGridIds(gridIds)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${gridIds}`);
+		this.alignment = this.determineAlignment(gridIds);
+		this.coordinates = Collection.of(gridIds);
 	}
 
 	private determineAlignment(gridIds: number[]): 'horizontal' | 'vertical' {
@@ -38,7 +38,7 @@ export default class Car {
 		return new Car(newFields.id || this.id,
 					   newFields.type || this.type,
 					   newFields.color || this.color,
-					   newFields.gridIds?.toArray() || newFields.ids || this.gridIds.toArray(),
+					   newFields.coordinates?.toArray() || newFields.gridIds || this.coordinates.toArray(),
 					   newFields.alignment || undefined);
 	}
 }

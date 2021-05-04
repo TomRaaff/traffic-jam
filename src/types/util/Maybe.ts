@@ -25,8 +25,8 @@ export default class Maybe<T> {
 		return this.val.flatMap(fn);
 	}
 
-	getOrElse(ifEmpty: () => T, fn: (t: T) => T): T {
-		return this.val.getOrElse(ifEmpty, fn);
+	getOrElse(ifEmpty: () => T): T {
+		return this.val.getOrElse(ifEmpty);
 	}
 
 	static of<S>(val: S | undefined) {
@@ -38,8 +38,7 @@ export default class Maybe<T> {
 	}
 
 	toEither<L>(left: L): Either<L, T> {
-		const value = this.val.getOrElse(() => (undefined as unknown as T),
-										 (value) => value);
+		const value = this.val.getOrElse(() => (undefined as unknown as T));
 		return (value === undefined) ? Either.ofLeft(left) : Either.of(value);
 	}
 }

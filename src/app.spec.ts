@@ -7,6 +7,7 @@ import Collection from './types/util/Collection';
 // import Violation from './types/Violation.enum';
 import Car from './types/Car';
 import Color from './types/Color.enum';
+import Violation from './types/Violation.enum';
 
 // let defaultGrid: Collection<GridItem>;
 beforeEach(() => {
@@ -78,21 +79,20 @@ describe('App', () => {
 
 	describe('MoveCar', () => {
 		let cars: Collection<Car>;
-		beforeEach(() => {
-			cars = Collection.of([
-									 new Car(1, Type.CAR, Color.BLUE, [11, 12]),
-									 new Car(2, Type.CAR, Color.RED, [22, 23, 24]),
-									 new Car(3, Type.CAR, Color.GREEN, [25, 35, 45]),
-									 new Car(4, Type.CAR, Color.YELLOW, [53, 63]),
-								 ]);
-		});
-
 		describe('should move a car', () => {
+			beforeEach(() => {
+				cars = Collection.of([
+										 new Car(1, Type.CAR, Color.BLUE, [31, 32], 'horizontal'),
+										 new Car(2, Type.CAR, Color.RED, [22, 23], 'horizontal'),
+										 new Car(3, Type.CAR, Color.GREEN, [25, 35], 'vertical'),
+										 new Car(4, Type.CAR, Color.YELLOW, [53, 63], 'vertical'),
+									 ]);
+			});
 			it('to the left', () => {
 				// arrange
 				const [car] = cars.find({id: 2});
 				const movement = { carId: car.id, direction: Direction.LEFT };
-				const expected = [21, 22, 23];
+				const expected = [21, 22];
 				// act
 				const result = moveCar(movement, cars);
 				// assert
@@ -100,7 +100,7 @@ describe('App', () => {
 						(violation) => fail('Violation occured' + violation.toString()),
 						(carsResult) => {
 							const [movingCar] = carsResult.find({id:2});
-							expect(movingCar.gridIds.toArray()).toEqual(expected);
+							expect(movingCar.coordinates.toArray()).toEqual(expected);
 						}
 				)
 			});
@@ -108,7 +108,7 @@ describe('App', () => {
 				// arrange
 				const [car] = cars.find({id: 1});
 				const movement = { carId: car.id, direction: Direction.RIGHT };
-				const expected = [12, 13];
+				const expected = [32, 33];
 				// act
 				const result = moveCar(movement, cars);
 				// assert
@@ -116,7 +116,7 @@ describe('App', () => {
 						(violation) => fail('Violation occured' + violation.toString()),
 						(carsResult) => {
 							const [movingCar] = carsResult.find({id:1});
-							expect(movingCar.gridIds.toArray()).toEqual(expected);
+							expect(movingCar.coordinates.toArray()).toEqual(expected);
 						}
 				)
 			});
@@ -132,7 +132,7 @@ describe('App', () => {
 						(violation) => fail('Violation occured' + violation.toString()),
 						(carsResult) => {
 							const [movingCar] = carsResult.find({id:4});
-							expect(movingCar.gridIds.toArray()).toEqual(expected);
+							expect(movingCar.coordinates.toArray()).toEqual(expected);
 						}
 				)
 			});
@@ -140,7 +140,7 @@ describe('App', () => {
 				// arrange
 				const [car] = cars.find({id: 3});
 				const movement = { carId: car.id, direction: Direction.DOWN };
-				const expected = [35, 45, 55];
+				const expected = [35, 45];
 				// act
 				const result = moveCar(movement, cars);
 				// assert
@@ -148,237 +148,74 @@ describe('App', () => {
 						(violation) => fail('Violation occured' + violation.toString()),
 						(carsResult) => {
 							const [movingCar] = carsResult.find({id:3});
-							expect(movingCar.gridIds.toArray()).toEqual(expected);
+							expect(movingCar.coordinates.toArray()).toEqual(expected);
 						}
 				)
 			});
 		});
+
+		describe('should NOT move a car when out of bounds', () => {
+			beforeEach(() => {
+				cars = Collection.of([
+										 new Car(1, Type.CAR, Color.BLUE, [31, 32], 'horizontal'),
+										 new Car(2, Type.CAR, Color.PURPLE, [15, 16], 'horizontal'),
+										 new Car(3, Type.CAR, Color.PURPLE, [14, 24], 'vertical'),
+										 new Car(4, Type.CAR, Color.GREEN, [56, 66], 'vertical'),
+									 ]);
+			});
+			it('to the left', () => {
+				// arrange
+				const [car] = cars.find({ id: 1 });
+				const movement = { carId: car.id, direction: Direction.LEFT };
+				const expected = Violation.GRID_BOUNDRY_REACHED;
+				// act
+				const result = moveCar(movement, cars);
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be out of bounds')
+				);
+			});
+			it('to the right', () => {
+				// arrange
+				const [car] = cars.find({ id: 2 });
+				const movement = { carId: car.id, direction: Direction.RIGHT };
+				const expected = Violation.GRID_BOUNDRY_REACHED;
+				// act
+				const result = moveCar(movement, cars);
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be out of bounds')
+				);
+			});
+			it('up', () => {
+				// arrange
+				const [car] = cars.find({ id: 3 });
+				const movement = { carId: car.id, direction: Direction.UP };
+				const expected = Violation.GRID_BOUNDRY_REACHED;
+				// act
+				const result = moveCar(movement, cars);
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be out of bounds')
+				);
+			});
+			it('down', () => {
+				// arrange
+				const [car] = cars.find({ id: 4 });
+				const movement = { carId: car.id, direction: Direction.DOWN };
+				const expected = Violation.GRID_BOUNDRY_REACHED;
+				// act
+				const result = moveCar(movement, cars);
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be out of bounds')
+				);
+			});
+		});
 	});
 
-	// describe('MoveItem', () => {
-	// 	describe('should move the a car', () => {
-	// 		it('to the left', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
-	// 									  .map(setType(21, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.LEFT,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toBeFalsy(),
-	// 				(newGrid) => expect(newGrid).toEqual(expected),
-	// 			);
-	// 		});
-	// 		it('to the right', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
-	// 									  .map(setType(23, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.RIGHT,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toBeFalsy(),
-	// 				(newGrid) => expect(newGrid).toEqual(expected),
-	// 			);
-	// 		});
-	// 		it('up', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
-	// 									  .map(setType(12, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.UP,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toBeFalsy(),
-	// 				(newGrid) => expect(newGrid).toEqual(expected),
-	// 			);
-	// 		});
-	// 		it('down', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			const expected = inputGrid.map(setType(currentLocation, Type.FREE))
-	// 									  .map(setType(32, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.DOWN,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toBeFalsy(),
-	// 				(newGrid) => expect(newGrid).toEqual(expected),
-	// 			);
-	// 		});
-	// 	});
-	//
-	// 	describe('should not move when there is a car blockade', () => {
-	// 		it('on the right', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER))
-	// 										 .map(setType(currentLocation + 1, Type.CAR));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.RIGHT,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.BLOCKED_BY_CAR),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 		it('on the left', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER))
-	// 										 .map(setType(currentLocation - 1, Type.CAR));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.LEFT,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.BLOCKED_BY_CAR),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 		it('above', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER))
-	// 										 .map(setType(currentLocation - 10, Type.CAR));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.UP,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.BLOCKED_BY_CAR),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 		it('below', () => {
-	// 			// arrange
-	// 			const currentLocation = 22;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER))
-	// 										 .map(setType(currentLocation + 10, Type.CAR));
-	// 			// act
-	// 			const result = moveItem({
-	// 										 type: Type.PLAYER,
-	// 										 locationId: currentLocation,
-	// 										 direction: Direction.DOWN,
-	// 										 currentGrid: inputGrid,
-	// 									 });
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.BLOCKED_BY_CAR),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 	});
-	//
-	// 	describe('should not move when the boundry has been reached', () => {
-	// 		it('above', () => {
-	// 			// arrange
-	// 			const currentLocation = 14;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 				type: Type.PLAYER,
-	// 				locationId: currentLocation,
-	// 				direction: Direction.UP,
-	// 				currentGrid: inputGrid,
-	// 			});
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.GRID_BOUNDRY_REACHED),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 		it('below', () => {
-	// 			// arrange
-	// 			const currentLocation = 54;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 				type: Type.PLAYER,
-	// 				locationId: currentLocation,
-	// 				direction: Direction.DOWN,
-	// 				currentGrid: inputGrid,
-	// 			});
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.GRID_BOUNDRY_REACHED),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 		it('left', () => {
-	// 			// arrange
-	// 			const currentLocation = 31;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 				type: Type.PLAYER,
-	// 				locationId: currentLocation,
-	// 				direction: Direction.LEFT,
-	// 				currentGrid: inputGrid,
-	// 			});
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.GRID_BOUNDRY_REACHED),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 		it('right', () => {
-	// 			// arrange
-	// 			const currentLocation = 35;
-	// 			const inputGrid = defaultGrid.map(setType(currentLocation, Type.PLAYER));
-	// 			// act
-	// 			const result = moveItem({
-	// 				type: Type.PLAYER,
-	// 				locationId: currentLocation,
-	// 				direction: Direction.RIGHT,
-	// 				currentGrid: inputGrid,
-	// 			});
-	// 			// assert
-	// 			result.leftOrRight(
-	// 				(violation) => expect(violation).toEqual(Violation.GRID_BOUNDRY_REACHED),
-	// 				(grid) => expect(grid).toBeFalsy(),
-	// 			);
-	// 		});
-	// 	});
-	// });
 });

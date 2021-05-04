@@ -1,6 +1,4 @@
-import {
-	beforeEach, describe, expect, it,
-} from '@jest/globals';
+import { beforeEach, describe, expect, it, } from '@jest/globals';
 import Collection from './Collection';
 
 type Employee = {
@@ -46,11 +44,13 @@ describe('Collection', () => {
 				.toBeTruthy();
 	});
 	it('.contains() should return false when the collection does not contain an item', () => {
-		expect(dataArray.contains({ name: 'Tin' })).toBeFalsy();
+		expect(dataArray.contains({ name: 'Tin' }))
+				.toBeFalsy();
 	});
 
 	it('.count() should return the length of the collection', () => {
-		expect(dataArray.count()).toEqual(4);
+		expect(dataArray.count())
+				.toEqual(4);
 	});
 
 	it('.push() should add an item to the collection', () => {
@@ -81,14 +81,16 @@ describe('Collection', () => {
 		// act
 		const result = dataArray.find({ id: 0 });
 		// assert
-		expect(result).toEqual(expected);
+		expect(result)
+				.toEqual(expected);
 	});
 	it('.find() should return an empty array when item not present', () => {
 		// arrange
 		// act
 		const result = dataArray.find({ id: 349857 });
 		// assert
-		expect(result).toEqual([]);
+		expect(result)
+				.toEqual([]);
 	});
 
 	it('.findOne() should return the requested item', () => {
@@ -100,22 +102,18 @@ describe('Collection', () => {
 			isExternalEmployee: false,
 		};
 		// act
-		const result = dataArray.findOne({ id: 0 });
+		const result = dataArray.findOne({ id: 0 })
+								.getOrElse(() => ({} as Employee));
 		// assert
-		result.getOrElse(
-			() => expect({} as Employee).toBeFalsy(),
-			(item) => expect(item).toEqual(expected),
-		);
+		expect(result).toEqual(expected);
 	});
 	it('.findOne() should return undefined when item not present', () => {
 		// arrange
 		// act
-		const result = dataArray.findOne({ id: 893987 });
+		const result = dataArray.findOne({ id: 893987 })
+								.getOrElse(() => ({} as Employee));
 		// assert
-		result.getOrElse(
-			() => expect({} as Employee).toBeTruthy(),
-			(item) => expect(item).toEqual(undefined),
-		);
+		expect(result).toEqual({ });
 	});
 
 	it('.copy() should return a copy of the Collection', () => {
@@ -130,7 +128,9 @@ describe('Collection', () => {
 					  isExternalEmployee: true,
 				  });
 		// assert
-		expect(original.count()).not.toEqual(copy.count());
+		expect(original.count())
+				.not
+				.toEqual(copy.count());
 	});
 
 	it('.filter() should return a copy of the Collection containing the filtered results', () => {
@@ -142,7 +142,8 @@ describe('Collection', () => {
 				.toBeTruthy();
 		expect(result.find({ name: 'Doa' }))
 				.toBeTruthy();
-		expect(result.count()).toEqual(2);
+		expect(result.count())
+				.toEqual(2);
 	});
 
 	it('.map() should return a copy of the Collection containing the mapped results', () => {
@@ -151,7 +152,8 @@ describe('Collection', () => {
 		// act
 		const result = dataArray.map((employee) => employee.role);
 		// assert
-		expect(result).toEqual(expected);
+		expect(result)
+				.toEqual(expected);
 	});
 
 	it('.reduce() should return the reduced result', () => {
@@ -166,6 +168,7 @@ describe('Collection', () => {
 		// act
 		const highestID = dataArray.reduce((acc, cur) => (cur.id > acc.id ? cur : acc), startItem);
 		// assert
-		expect(highestID.id).toEqual(expected);
+		expect(highestID.id)
+				.toEqual(expected);
 	});
 });

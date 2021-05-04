@@ -9,7 +9,7 @@ export default class None<T> {
 		return Maybe.empty();
 	}
 
-	getOrElse(ifEmpty: () => T, fn?: (t: T) => T): T {
+	getOrElse(ifEmpty: () => T): T {
 		return ifEmpty();
 	}
 }

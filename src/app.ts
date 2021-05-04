@@ -47,26 +47,41 @@ import { Movement } from './types/Movement';
 // 										  .map(setType(location, input.type))
 // 			);
 // }
+const areAllTrue = (acc: boolean, cur: boolean): boolean => (cur) ? acc : cur;
 
-function determineNextLocation(car: Car, direction: Direction): number[] {
+function isWithinBoundaries(id: number): boolean {
+	if (id < 11 || id > 66) return false;
+	return id.toString()
+			 .split('')
+			 .map(char => parseInt(char, 10))
+			 .map(num => num >= 1 && num <= 6)
+			 .reduce(areAllTrue, true);
+}
+
+function checkBoundaryViolation(gridIds: number[]): Either<Violation, number[]> {
+	const areAllWithinBoundaries = gridIds.map(isWithinBoundaries)
+										  .reduce(areAllTrue, true);
+	return (areAllWithinBoundaries) ? Either.of(gridIds) : Either.ofLeft(Violation.GRID_BOUNDRY_REACHED);
+}
+
+function determineNextLocation(car: Car, direction: Direction): Either<Violation, number[]> {
 	const movement = {
 		up: -10,
 		right: 1,
 		left: -1,
 		down: 10,
 	};
-	return car.gridIds
-			  .map((gridId) => gridId + movement[direction])
-			  .toArray();
+	return Either.of(car.coordinates
+						.map((gridId) => gridId + movement[direction])
+						.toArray());
 }
 
-// TODO implement this
 export function moveCar(movement: Movement, cars: Collection<Car>): Either<Violation, Collection<Car>> {
 	const [car] = cars.find({ id: movement.carId });
-	console.log(determineNextLocation(car, movement.direction));
-	let newCar = car.copy({ ids: determineNextLocation(car, movement.direction) });
-	cars.update({ id: car.id }, newCar);
-	return Either.of(cars);
+	return determineNextLocation(car, movement.direction)
+			.flatMap(checkBoundaryViolation)
+			.map((gridIds) => car.copy({ gridIds }))
+			.map((newCar) => cars.update({ id: newCar.id }, newCar));
 }
 
 export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
@@ -82,12 +97,12 @@ export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
 			.leftOrRight(
 					// if new car
 					(car) => {
-						car.gridIds.push(gridItem.id);
+						car.coordinates.push(gridItem.id);
 						cars.push(car);
 					},
 					// if existing car
 					(car) => {
-						car.gridIds.push(gridItem.id);
+						car.coordinates.push(gridItem.id);
 					}
 			);
 	});
@@ -97,7 +112,7 @@ export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
 function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = Collection.empty<GridItem>();
 	cars.forEach((car: Car) => {
-		const gridItems: Collection<GridItem> = car.gridIds.map((gridId) => ({
+		const gridItems: Collection<GridItem> = car.coordinates.map((gridId) => ({
 			id: gridId,
 			type: car.type,
 			carId: car.id,
@@ -120,9 +135,6 @@ export function carsToGrid(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = carsToGridItems(cars);
 	return ids.map((id) => {
 		return carGridItems.findOne({ id })
-						   .getOrElse(
-								   () => ({ id, type: Type.FREE } as GridItem),
-								   (gridItem) => gridItem,
-						   );
+						   .getOrElse(() => ({ id, type: Type.FREE } as GridItem));
 	});
 }

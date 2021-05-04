@@ -37,19 +37,19 @@ j.describe('Car', () => {
 	});
 
 	j.describe('should throw an error', () => {
-		j.it('when gridIds contain a horizontal gap', () => {
+		j.it('when coordinates contain a horizontal gap', () => {
 			j.expect(() => new Car(1, Type.CAR, Color.GREEN, [11, 12, 13, 15]))
 			 .toThrow();
 		});
-		j.it('when gridIds contain a vertical gap', () => {
+		j.it('when coordinates contain a vertical gap', () => {
 			j.expect(() => new Car(1, Type.CAR, Color.GREEN, [11, 21, 41]))
 			 .toThrow();
 		});
-		j.it('when gridIds lined up diagonally nw-se', () => {
+		j.it('when coordinates lined up diagonally nw-se', () => {
 			j.expect(() => new Car(1, Type.CAR, Color.GREEN, [11, 22, 33]))
 			 .toThrow();
 		});
-		j.it('when gridIds lined up diagonally sw-ne', () => {
+		j.it('when coordinates lined up diagonally sw-ne', () => {
 			j.expect(() => new Car(1, Type.CAR, Color.GREEN, [31, 22, 13]))
 			 .toThrow();
 		});

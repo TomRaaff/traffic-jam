@@ -112,7 +112,7 @@ function toHTMLDiv(gridItem: GridItem): HTMLElement {
 	return element;
 }
 
-function renderGrid(grid: Collection<GridItem>) {
+function renderGrid(grid: Collection<GridItem>): void {
 	select('section.car-grid')
 			.map(removeChildren)
 			.map(gridContainer => addChildren(gridContainer,
@@ -120,10 +120,6 @@ function renderGrid(grid: Collection<GridItem>) {
 			);
 }
 
-/*
- Todo:
- - Fix that when a car moves, it should move all of its parts
- */
 export default function start() {
 	renderGrid(buildLevel(0));
 }

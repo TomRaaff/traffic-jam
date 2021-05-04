@@ -44,15 +44,15 @@ export default class Collection<T> {
 	contains(seek: Partial<T>): boolean {
 		return this.findOne(seek)
 				   .map(Boolean)
-				   .getOrElse(() => false, (isPresent) => isPresent);
+				   .getOrElse(() => false);
 	}
 
-	update(seek: Partial<T>, update: T): boolean {
+	update(seek: Partial<T>, update: T): Collection<T> {
 		return this.findOne(seek)
 				   .map((item) => this.pull(item))
 				   .map(() => this.push(update))
-				   .getOrElse(() => false,
-							  (isUpdated) => isUpdated);
+				   .map((_) => this)
+				   .getOrElse(() => this);
 	}
 
 	copy(): Collection<T> {

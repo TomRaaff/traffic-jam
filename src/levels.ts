@@ -6,7 +6,7 @@ import GridItem from './types/GridItem';
 import { carsToGrid } from './app';
 
 /*
-	grid ids:
+	grid id's:
 	 11, 12, 13, 14, 15, 16,
 	 21, 22, 23, 24, 25, 26,
 	 31, 32, 33, 34, 35, 36,
