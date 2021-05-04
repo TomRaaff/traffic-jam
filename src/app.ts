@@ -62,24 +62,13 @@ export function moveCar(movement: Movement, cars: Collection<Car>): Either<Viola
 export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
 	const cars = Collection.empty<Car>();
 	grid.forEach(gridItem => {
-		// make sure the cars contain the right id's
-		cars.findOne({ id: gridItem.carId! })
-				// Either a new car (L) or the found result(R)
-			.toEither(new Car(gridItem.carId!,
-							  gridItem.type,
-							  gridItem.color!,
-							  []))
-			.leftOrRight(
-					// if new car
-					(car) => {
-						car.coordinates.push(gridItem.id);
-						cars.push(car);
-					},
-					// if existing car
-					(car) => {
-						car.coordinates.push(gridItem.id);
-					}
-			);
+		const car = cars.findOne({ id: gridItem.carId! })
+						.getOrElse(() => new Car(gridItem.carId!,
+												 gridItem.type,
+												 gridItem.color!,
+												 []));
+		car.coordinates.push(gridItem.id);
+		if (!cars.contains({id: car.id})) cars.push(car)
 	});
 	return cars;
 }

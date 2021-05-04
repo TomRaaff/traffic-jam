@@ -183,6 +183,17 @@ describe('App', () => {
 							(result) => expect(result).toEqual(coordinates)
 					);
 				});
+				it('should not check the moving car itself', () => {
+					// arrange
+					const coordinates = [31, 32];
+					// act
+					checkBlockingCarViolation(coordinates, cars, 2)
+							.leftOrRight(
+							(_) => fail('Should not be blocked'),
+							(result) => expect(result).toEqual(coordinates)
+					);
+				});
+
 			});
 
 			it('to the left', () => {
