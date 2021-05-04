@@ -7,47 +7,21 @@ import Violation from './types/Violation.enum';
 import Car from './types/Car';
 import { Movement } from './types/Movement';
 
-// export function determineType(classList: string[]): Type {
-// 	if (classList.includes(Type.PLAYER)) return Type.PLAYER;
-// 	if (classList.includes(Type.CAR)) return Type.CAR;
-// 	return Type.FREE;
-// }
-//
-// function setType(id: number, type: Type): (a: GridItem) => GridItem {
-// 	return (gridItem: GridItem) => {
-// 		if (gridItem.id === id) {
-// 			return { id, type };
-// 		}
-// 		return gridItem;
-// 	};
-// }
-//
-// function nextLocation(locationId: number, direction: Direction, grid: Collection<GridItem>): Either<Violation, number> {
-// 	const nextLocationId = locationId + movement[direction];
-// 	return grid.findOne({ id: nextLocationId })
-// 			   .toEither(Violation.GRID_BOUNDRY_REACHED)
-// 			   .flatMap((gridItem) => ((gridItem.type === Type.FREE) ? Either.of(gridItem.id) : Either.ofLeft(Violation.BLOCKED_BY_CAR)));
-// }
-//
-// export type MoveItemInput = {
-// 	type: Type;
-// 	locationId: number;
-// 	direction: Direction;
-// 	currentGrid: Collection<GridItem>;
-// }
-//
-// export function moveItem(input: MoveItemInput): Either<Violation, Collection<GridItem>> {
-// 	const {
-// 		locationId,
-// 		direction,
-// 		currentGrid
-// 	} = input;
-// 	return nextLocation(locationId, direction, currentGrid)
-// 			.map((location) => currentGrid.map(setType(locationId, Type.FREE))
-// 										  .map(setType(location, input.type))
-// 			);
-// }
+const containsBlockage = (acc: boolean, cur: boolean): boolean => (cur) ? cur : acc;
 const areAllTrue = (acc: boolean, cur: boolean): boolean => (cur) ? acc : cur;
+
+export function checkBlockingCarViolation(newCoordinates: number[], cars: Collection<Car>, carId: number): Either<Violation, number[]> {
+	const isInNewCoordinates = (coordinate: number) => newCoordinates.indexOf(coordinate) != -1;
+
+	const blocked = cars.filter((car) => car.id != carId)
+						.map((car) => {
+							return car.coordinates
+									  .map(isInNewCoordinates)
+									  .reduce(containsBlockage, false);
+						})
+						.reduce(containsBlockage, false);
+	return (blocked) ? Either.ofLeft(Violation.BLOCKED_BY_CAR) : Either.of(newCoordinates);
+}
 
 function isWithinBoundaries(id: number): boolean {
 	if (id < 11 || id > 66) return false;
@@ -58,10 +32,10 @@ function isWithinBoundaries(id: number): boolean {
 			 .reduce(areAllTrue, true);
 }
 
-function checkBoundaryViolation(gridIds: number[]): Either<Violation, number[]> {
-	const areAllWithinBoundaries = gridIds.map(isWithinBoundaries)
-										  .reduce(areAllTrue, true);
-	return (areAllWithinBoundaries) ? Either.of(gridIds) : Either.ofLeft(Violation.GRID_BOUNDRY_REACHED);
+function checkBoundaryViolation(newCoordinates: number[]): Either<Violation, number[]> {
+	const areAllWithinBoundaries = newCoordinates.map(isWithinBoundaries)
+												 .reduce(areAllTrue, true);
+	return (areAllWithinBoundaries) ? Either.of(newCoordinates) : Either.ofLeft(Violation.GRID_BOUNDRY_REACHED);
 }
 
 function determineNextLocation(car: Car, direction: Direction): Either<Violation, number[]> {
@@ -80,6 +54,7 @@ export function moveCar(movement: Movement, cars: Collection<Car>): Either<Viola
 	const [car] = cars.find({ id: movement.carId });
 	return determineNextLocation(car, movement.direction)
 			.flatMap(checkBoundaryViolation)
+			.flatMap((coordinates) => checkBlockingCarViolation(coordinates, cars, car.id))
 			.map((gridIds) => car.copy({ gridIds }))
 			.map((newCar) => cars.update({ id: newCar.id }, newCar));
 }
