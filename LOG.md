@@ -38,3 +38,19 @@ TODO:
 #### 21 April
 functionaliteit toegevoegd om een grid naar een lijst van auto's toe te mappen
 
+#### 4 Mei
+Logs zijn niet compleet.
+Checks toegevoegd om te kijken of een auto wel mag bewegen. Hij moet geblokkeerd worden
+door de randen van het grid, en er mag geen andere auto staan.
+Ook een paar refactorings doorgevoerd op de Maybe wat hem een stuk logischer maakt:
+in de getOrElse niet om 2 functies vragen, maar alleen om een functie voor als de waarde niet bestaat.
+Ik heb het ook met Jacob gehad over de Either en dat hij een Either hernoemd heeft naar een Result
+om beter de intentie er van te kunnen duiden. Either klinkt alsof beide paden goed zijn, maar
+mijn implementatie is eigenlijk een unhappy- en een happy-flow. 
+
+De unittests werken ook weer zoals het hoort. Het herschrijven na de grote refactoring
+was minder werk dan aanvankelijk gedacht. 
+
+Ook heb ik er voor gezorgd dat de blokjes niet meer 4 pijltjes hebben, maar 2. Echter werkt dat nog 
+niet volledig. Bij het klikken op de horizontale pijltjes, worden opeens alle pijltjes op alle
+auto's horizontaal. De styling moet ook nog gefixed worden voor de horizontale pijltjes.
