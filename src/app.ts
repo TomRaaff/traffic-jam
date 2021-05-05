@@ -66,9 +66,10 @@ export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
 						.getOrElse(() => new Car(gridItem.carId!,
 												 gridItem.type,
 												 gridItem.color!,
-												 []));
+												 [],
+												 gridItem.alignment));
 		car.coordinates.push(gridItem.id);
-		if (!cars.contains({id: car.id})) cars.push(car)
+		if (!cars.contains({ id: car.id })) cars.push(car);
 	});
 	return cars;
 }
@@ -76,12 +77,12 @@ export function gridToCars(grid: Collection<GridItem>): Collection<Car> {
 function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = Collection.empty<GridItem>();
 	cars.forEach((car: Car) => {
-		const gridItems: Collection<GridItem> = car.coordinates.map((gridId) => ({
+		const gridItems: Collection<GridItem> = car.coordinates.map((gridId) => GridItem.build({
 			id: gridId,
 			type: car.type,
 			carId: car.id,
 			color: car.color,
-			alignment: car.alignment
+			alignment: car.alignment!
 		}));
 		gridItems.forEach(item => carGridItems.push(item));
 	});
@@ -100,6 +101,6 @@ export function carsToGrid(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = carsToGridItems(cars);
 	return ids.map((id) => {
 		return carGridItems.findOne({ id })
-						   .getOrElse(() => ({ id, type: Type.FREE } as GridItem));
+						   .getOrElse(() => GridItem.build({ id, type: Type.FREE }));
 	});
 }

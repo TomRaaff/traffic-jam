@@ -12,9 +12,9 @@ export default class Car {
 				readonly gridIds: number[],
 				public readonly alignment?: 'horizontal' | 'vertical') {
 		if (id === 0) throw new Error('Car can not have id: 0');
-		if (gridIds.length === 1 && alignment == null) throw new Error('Invalid object. Alignment should be set.');
-		if (!this.hasValidGridIds(gridIds)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${gridIds}`);
-		this.alignment = this.determineAlignment(gridIds);
+		if (gridIds.length === 1) throw new Error('Invalid object. Needs more than one gridId');
+		if (!this.areGridIdsLinedUp(gridIds)) throw new Error(`Invalid object. Grid ids do not line up correctly: ${gridIds}`);
+		this.alignment = (alignment) ? alignment : this.determineAlignment(gridIds);
 		this.coordinates = Collection.of(gridIds);
 	}
 
@@ -24,8 +24,7 @@ export default class Car {
 		return ((highest - lowest) < 10) ? 'horizontal' : 'vertical';
 	}
 
-	private hasValidGridIds(gridIds: number[]): boolean {
-		if (gridIds.length === 1) return true;
+	private areGridIdsLinedUp(gridIds: number[]): boolean {
 		const num = gridIds.reduce((acc, cur) => {
 									   const diff = Math.abs(cur - acc);
 									   return (diff === 1 || diff === 10) ? cur : 0;

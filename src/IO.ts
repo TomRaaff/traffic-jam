@@ -25,7 +25,7 @@ function renderViolation(violation: Violation): void {
 			);
 }
 
-function getCarElement(arrowElement: HTMLElement): HTMLElement {
+function findCarElement(arrowElement: HTMLElement): HTMLElement {
 	return arrowElement.parentElement!.parentElement!;
 }
 
@@ -36,8 +36,8 @@ function readCars(): Collection<Car> {
 
 function clickArrow(direction: Direction): (e: Event) => void {
 	return ({ currentTarget }): void => {
-		const gridItem = toGridItem(getCarElement(currentTarget as HTMLElement));
-		const movement = { carId: gridItem.carId, direction } as Movement;
+		const currentGridItem = toGridItem(findCarElement(currentTarget as HTMLElement));
+		const movement = { carId: currentGridItem.carId, direction } as Movement;
 		moveCar(movement, readCars())
 				.map(carsToGrid)
 				.leftOrRight(
@@ -47,11 +47,6 @@ function clickArrow(direction: Direction): (e: Event) => void {
 	};
 }
 
-/*
-	Todo:
-		This is still buggy. Whenever I move one item horizontally, all the items take the same alignment.
-		Why?
- */
 function addArrows(carElement: HTMLElement, alignment: 'horizontal' | 'vertical') {
 	if (!hasFocus(carElement)) {
 		focus(carElement);
@@ -86,22 +81,29 @@ function removeArrows(carElement: HTMLElement) {
 	}
 }
 
-/*
- reads from div-elements that look like this:
- <div class='car|player color' id='number' data-car-id='number' data-alignment='horizontal'>
- or
- <div class='free' id='number'>
+/**
+ * reads from div-elements that look like this:
+ * <div class='free' id='number'>
+ * or
+ * <div class='car|player color' id='number' data-car-id='number' data-alignment='horizontal|vertical'>
+ * @param element: HTMLElement
  */
 export function toGridItem(element: HTMLElement): GridItem {
 	const classes = getClassList(element);
-	return {
-		id: parseInt(element.id, 10),
-		type: classes[0] as Type,
-		color: classes[1] as Color,
-		carId: (element.dataset.carId)
-			   ? parseInt(element.dataset.carId, 10)
-			   : undefined
-	};
+	if (classes[0] === Type.FREE) {
+		return GridItem.build({
+								  id: parseInt(element.id, 10),
+								  type: classes[0] as Type,
+							  } as FreeGridItem);
+	} else {
+		return GridItem.build({
+								  id: parseInt(element.id, 10),
+								  type: classes[0] as Type,
+								  color: classes[1] as Color,
+								  carId: parseInt(element.dataset.carId!, 10),
+								  alignment: element.dataset.alignment!
+							  } as CarGridItem);
+	}
 }
 
 /**
