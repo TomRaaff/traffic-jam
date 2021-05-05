@@ -80,7 +80,8 @@ function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 			id: gridId,
 			type: car.type,
 			carId: car.id,
-			color: car.color
+			color: car.color,
+			alignment: car.alignment
 		}));
 		gridItems.forEach(item => carGridItems.push(item));
 	});
