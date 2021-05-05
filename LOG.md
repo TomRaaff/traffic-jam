@@ -54,3 +54,21 @@ was minder werk dan aanvankelijk gedacht.
 Ook heb ik er voor gezorgd dat de blokjes niet meer 4 pijltjes hebben, maar 2. Echter werkt dat nog 
 niet volledig. Bij het klikken op de horizontale pijltjes, worden opeens alle pijltjes op alle
 auto's horizontaal. De styling moet ook nog gefixed worden voor de horizontale pijltjes.
+
+#### 5 Mei
+Fixed the alignment bug, refactored some functionality and restyled the arrows.
+Now the app is actually working correctly. It took me far longer than I imagined and that's partly
+because I didn't do enough upfront-design. I came to the conclusion that I actually want the 
+interaction with the user to be different. Not based on arrows, but on which part of the car you click.
+If I'd have thought about that earlier, it wouldn't have been a big deal. Now, I'm not likely to 
+implement it.
+
+TODO:
+- Create winning conditions
+- Add levels
+- Switch levels when winning
+- Add a reset button
+
+Nice to have: 
+- Change the user-interaction: 
+    Instead of having arrows to click on, use the car tiles to determine which way the car goes.
