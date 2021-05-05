@@ -8,7 +8,7 @@ $lightGrey: #e5e5e5
 $grey: #a9a9a9
 $darkGrey: #090909
 
-$arrowSize: 15px
+$arrowSize: 25px
 
 *
   margin: 0
@@ -54,7 +54,6 @@ body
 
     .player,
     .car
-      //background: $lightRed
       width: 100%
       height: 100%
       position: relative
@@ -64,14 +63,9 @@ body
       transition: all 0.2s ease-in-out
 
     .car:hover
-      //background: $red
       padding: 5%
 
-    .player
-      //background: $lightGreen
-
     .player:hover
-      //background: $green
       padding: 5%
 
   .popup
@@ -105,8 +99,10 @@ body
   width: 100%
 
 .arrow-container.center
+    height: 100%
     display: flex
     justify-content: space-between
+    align-items: center
 
 .up
   width: 0
