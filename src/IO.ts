@@ -47,7 +47,7 @@ function clickArrow(direction: Direction): (e: Event) => void {
 	};
 }
 
-function addArrows(carElement: HTMLElement, alignment: 'horizontal' | 'vertical') {
+(window as any).addArrows = (carElement: HTMLElement, alignment: 'horizontal' | 'vertical') => {
 	if (!hasFocus(carElement)) {
 		focus(carElement);
 		const children = [];
@@ -71,7 +71,7 @@ function addArrows(carElement: HTMLElement, alignment: 'horizontal' | 'vertical'
 	}
 }
 
-function removeArrows(carElement: HTMLElement) {
+(window as any).removeArrows = (carElement: HTMLElement) => {
 	if (hasFocus(carElement)) {
 		selectAll('.arrow-container')
 				.forEach((container) => {
@@ -106,42 +106,31 @@ export function toGridItem(element: HTMLElement): GridItem {
 	}
 }
 
-/**
- * creates <div class='free' id='${id}'>
- * @param gridItem: FreeGridItem
- */
-function createFreeElement(gridItem: FreeGridItem): HTMLElement {
-	const element = document.createElement('DIV');
-	element.id = gridItem.id.toString();
-	element.classList.add(gridItem.type);
-	return element;
+function createFreeDiv(gridItem: FreeGridItem): string {
+	return `<div class='${gridItem.type}' id="${gridItem.id}">`
 }
 
-/**
- * creates <div class='${car|player} ${color}' id='${id}' data-car-id='${carId}' data-alignment='${alignment}'>
- * @param gridItem: CarGridItem
- */
-function createCarElement(gridItem: CarGridItem): HTMLElement {
-	const element = document.createElement('DIV');
-	element.id = gridItem.id.toString();
-	element.classList.add(gridItem.type, gridItem.color);
-	const alignment = gridItem.alignment;
-	element.dataset.carId = gridItem.carId.toString();
-	element.dataset.alignment = alignment;
-	element.addEventListener('mouseover', () => addArrows(element, alignment));
-	element.addEventListener('mouseleave', () => removeArrows(element));
-	return element;
+function createCarDiv(gridItem: CarGridItem): string {
+	const { type, color, id, carId, alignment } = gridItem;
+
+	return `<div class='${type} ${color}' 
+				 id='${id}' 
+				 data-car-id='${carId}' 
+				 data-alignment='${alignment}'
+				 onmouseover="addArrows(this, '${alignment}')"
+				 onmouseleave="removeArrows(this)">`;
 }
 
-function toHTMLDiv(gridItem: GridItem): HTMLElement {
+function toDivString(gridItem: GridItem): string {
 	const isFree = gridItem.type === Type.FREE;
-	return (isFree) ? createFreeElement(gridItem as FreeGridItem) : createCarElement(gridItem as CarGridItem);
+	return (isFree) ? createFreeDiv(gridItem as FreeGridItem) : createCarDiv(gridItem as CarGridItem);
 }
 
 function renderGrid(grid: Collection<GridItem>): void {
 	select('section.car-grid')
 			.map(removeChildren)
-			.map(gridContainer => addChildren(gridContainer, grid.map(toHTMLDiv)));
+			.map(gridContainer => grid.map(toDivString)
+									  .map(el => gridContainer.insertAdjacentHTML('beforeend', el)));
 }
 
 export default function start() {
