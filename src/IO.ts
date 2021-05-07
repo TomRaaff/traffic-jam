@@ -112,7 +112,6 @@ function createFreeDiv(gridItem: FreeGridItem): string {
 
 function createCarDiv(gridItem: CarGridItem): string {
 	const { type, color, id, carId, alignment } = gridItem;
-
 	return `<div class='${type} ${color}' 
 				 id='${id}' 
 				 data-car-id='${carId}' 

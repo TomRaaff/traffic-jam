@@ -38,6 +38,16 @@ function checkBoundaryViolation(newCoordinates: number[]): Either<Violation, num
 	return (areAllWithinBoundaries) ? Either.of(newCoordinates) : Either.ofLeft(Violation.GRID_BOUNDRY_REACHED);
 }
 
+// todo: the columns aren't the first number in the coordinate, they are the second.
+//		I'm now checking if row no. 7 has been reached.
+function checkIfWinning(car: Car, newCoordinates: number[]): Either<Violation, number[]> {
+	console.log('coords', newCoordinates);
+	const reachedColumn7 = newCoordinates.filter((coord) => coord > 70).length > 0;
+	return (reachedColumn7 && car.type === Type.PLAYER)
+		   ? Either.ofLeft(Violation.YOU_WON)
+		   : Either.of(newCoordinates);
+}
+
 function determineNextLocation(car: Car, direction: Direction): Either<Violation, number[]> {
 	const movement = {
 		up: -10,
@@ -53,6 +63,7 @@ function determineNextLocation(car: Car, direction: Direction): Either<Violation
 export function moveCar(movement: Movement, cars: Collection<Car>): Either<Violation, Collection<Car>> {
 	const [car] = cars.find({ id: movement.carId });
 	return determineNextLocation(car, movement.direction)
+			.flatMap(coordinates => checkIfWinning(car, coordinates))
 			.flatMap(checkBoundaryViolation)
 			.flatMap((coordinates) => checkBlockingCarViolation(coordinates, cars, car.id))
 			.map((gridIds) => car.copy({ gridIds }))

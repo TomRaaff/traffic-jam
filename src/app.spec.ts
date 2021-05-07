@@ -152,7 +152,6 @@ describe('App', () => {
 		});
 
 		describe('should NOT move a car when there is another car', () => {
-
 			beforeEach(() => {
 				cars = Collection.of([
 										 new Car(1, Type.CAR, Color.BLUE, [35, 36], 'horizontal'),
@@ -242,6 +241,66 @@ describe('App', () => {
 				const expected = Violation.BLOCKED_BY_CAR;
 				// act
 				const result = moveCar(movement, cars);
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be blocked')
+				);
+			});
+		});
+
+		fdescribe('should win when', () => {
+			it('the player reaches column 7 on row 3', () => {
+				// arrange
+				const car = new Car(1, Type.PLAYER, Color.RED, [35, 36]);
+				const movement = { carId: car.id, direction: Direction.RIGHT };
+				const expected = Violation.YOU_WON;
+				// act
+				const result = moveCar(movement, Collection.of([car]));
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be winning')
+				);
+			});
+
+			it('the player reaches column 7 on row 6', () => {
+				// arrange
+				const car = new Car(1, Type.PLAYER, Color.RED, [65, 66]);
+				const movement = { carId: car.id, direction: Direction.RIGHT };
+				const expected = Violation.YOU_WON;
+				// act
+				const result = moveCar(movement, Collection.of([car]));
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be winning')
+				);
+			});
+		});
+
+		describe('should NOT win when', () => {
+			it('a car reaches column 7 on row 3', () => {
+				// arrange
+				const car = new Car(1, Type.CAR, Color.RED, [35, 36]);
+				const movement = { carId: car.id, direction: Direction.RIGHT };
+				const expected = Violation.GRID_BOUNDRY_REACHED;
+				// act
+				const result = moveCar(movement, Collection.of([car]));
+				// assert
+				result.leftOrRight(
+						(violation) => expect(violation).toBe(expected),
+						() => fail('Should be blocked')
+				);
+			});
+
+			it('a car reaches column 7 on row 6', () => {
+				// arrange
+				const car = new Car(1, Type.CAR, Color.RED, [65, 66]);
+				const movement = { carId: car.id, direction: Direction.RIGHT };
+				const expected = Violation.GRID_BOUNDRY_REACHED;
+				// act
+				const result = moveCar(movement, Collection.of([car]));
 				// assert
 				result.leftOrRight(
 						(violation) => expect(violation).toBe(expected),
