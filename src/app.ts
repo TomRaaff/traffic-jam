@@ -41,7 +41,6 @@ function checkBoundaryViolation(newCoordinates: number[]): Either<Violation, num
 // todo: the columns aren't the first number in the coordinate, they are the second.
 //		I'm now checking if row no. 7 has been reached.
 function checkIfWinning(car: Car, newCoordinates: number[]): Either<Violation, number[]> {
-	console.log('coords', newCoordinates);
 	const reachedColumn7 = newCoordinates.filter((coord) => coord > 70).length > 0;
 	return (reachedColumn7 && car.type === Type.PLAYER)
 		   ? Either.ofLeft(Violation.YOU_WON)

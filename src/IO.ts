@@ -110,6 +110,11 @@ function createFreeDiv(gridItem: FreeGridItem): string {
 	return `<div class='${gridItem.type}' id="${gridItem.id}">`
 }
 
+// Rogiers JS magic
+// function tag(template: string[], ...values: any[]) {
+// 	console.log({template, values});
+// }
+
 function createCarDiv(gridItem: CarGridItem): string {
 	const { type, color, id, carId, alignment } = gridItem;
 	return `<div class='${type} ${color}' 
@@ -133,5 +138,9 @@ function renderGrid(grid: Collection<GridItem>): void {
 }
 
 export default function start() {
+	// Rogiers JS magic
+	// const iets = 3;
+	// const verhaal = 'een verhaal';
+	// tag`whuttufuk...? ${iets} nog iets anders ${verhaal}`;
 	renderGrid(buildLevel(0));
 }
