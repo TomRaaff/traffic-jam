@@ -40,8 +40,20 @@ function checkBoundaryViolation(newCoordinates: number[]): Either<Violation, num
 
 // todo: the columns aren't the first number in the coordinate, they are the second.
 //		I'm now checking if row no. 7 has been reached.
+/**
+ * Example newCoordinates: [32, 33, 34]
+ * This function checks whether the second character in each number is 7. If it is, you've reached column
+ * number 7. If the car reaching column 7 is the player, then you've won.
+ * @param car
+ * @param newCoordinates
+ */
 function checkIfWinning(car: Car, newCoordinates: number[]): Either<Violation, number[]> {
-	const reachedColumn7 = newCoordinates.filter((coord) => coord > 70).length > 0;
+	const secondCharacter = (num: number) => num.toString()
+												.charAt(1);
+	const coordinatesOnColumn7 = newCoordinates.map(secondCharacter)
+											   .map(str => parseInt(str))
+											   .filter((num) => num === 7);
+	const reachedColumn7 = coordinatesOnColumn7.length > 0;
 	return (reachedColumn7 && car.type === Type.PLAYER)
 		   ? Either.ofLeft(Violation.YOU_WON)
 		   : Either.of(newCoordinates);
@@ -88,12 +100,12 @@ function carsToGridItems(cars: Collection<Car>): Collection<GridItem> {
 	const carGridItems = Collection.empty<GridItem>();
 	cars.forEach((car: Car) => {
 		const gridItems: Collection<GridItem> = car.coordinates.map((gridId) => GridItem.build({
-			id: gridId,
-			type: car.type,
-			carId: car.id,
-			color: car.color,
-			alignment: car.alignment!
-		}));
+																								   id: gridId,
+																								   type: car.type,
+																								   carId: car.id,
+																								   color: car.color,
+																								   alignment: car.alignment!
+																							   }));
 		gridItems.forEach(item => carGridItems.push(item));
 	});
 	return carGridItems;

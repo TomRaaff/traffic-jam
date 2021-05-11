@@ -249,7 +249,7 @@ describe('App', () => {
 			});
 		});
 
-		fdescribe('should win when', () => {
+		describe('should win when', () => {
 			it('the player reaches column 7 on row 3', () => {
 				// arrange
 				const car = new Car(1, Type.PLAYER, Color.RED, [35, 36]);
