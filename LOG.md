@@ -72,3 +72,9 @@ TODO:
 Nice to have: 
 - Change the user-interaction: 
     Instead of having arrows to click on, use the car tiles to determine which way the car goes.
+
+#### 11 Mei
+Correctly implemented the winning conditions. 
+
+#### 12 Mei
+implemented 6 levels
