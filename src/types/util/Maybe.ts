@@ -5,16 +5,17 @@ import Either from './Either';
 export default class Maybe<T> {
 	private val: Some<T> | None<T>;
 
-	private constructor(input?: T | undefined | null) {
-		let value: T | undefined;
-		if (input) {
-			if (input instanceof Maybe) {
-				this.val = input;
+	private constructor(input?: T | undefined) {
+		if (input == undefined) {
+			this.val = new None();
+		} else {
+			if (input instanceof Maybe || input instanceof Some || input instanceof None) {
+				const innerVal = input.getOrElse(() => '@#NoValue#@');
+				this.val = (innerVal === '@#NoValue#@' || innerVal == undefined) ? new None() : new Some(innerVal);
 			} else {
-				value = input;
+				this.val = new Some(input!);
 			}
 		}
-		this.val = (value) ? new Some(value) : new None();
 	}
 
 	map<S>(fn: (t: T) => S): Maybe<S> {

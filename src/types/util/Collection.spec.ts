@@ -107,13 +107,20 @@ describe('Collection', () => {
 		// assert
 		expect(result).toEqual(expected);
 	});
-	it('.findOne() should return undefined when item not present', () => {
+	it('.findOne() should return Maybe.None when item not present', () => {
 		// arrange
+		const expected = {
+			id: 0,
+			name: 'Rogier',
+			role: 'lead-dev',
+			isExternalEmployee: false,
+		}
 		// act
-		const result = dataArray.findOne({ id: 893987 })
-								.getOrElse(() => ({} as Employee));
+		const employeeMaybe = dataArray.findOne({ id: 893987 });
+		const result = employeeMaybe
+								.getOrElse(() => expected);
 		// assert
-		expect(result).toEqual({ });
+		expect(result).toEqual(expected);
 	});
 
 	it('.copy() should return a copy of the Collection', () => {

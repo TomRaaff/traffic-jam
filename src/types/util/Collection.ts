@@ -7,6 +7,10 @@ export default class Collection<T> {
 		this.collection.push(...items);
 	}
 
+	get(index: number): Maybe<T> {
+		return Maybe.of(this.collection[index]);
+	}
+
 	count(): number {
 		return this.collection.length;
 	}
@@ -32,13 +36,8 @@ export default class Collection<T> {
 	findOne(seek: Partial<T>): Maybe<T> {
 		const keys = Object.keys(seek) as Array<keyof T>;
 
-		for (let i = 0; i < this.collection.length; i += 1) {
-			const item = this.collection[i];
-			if (keys.every((key) => item[key] === seek[key])) {
-				return Maybe.of(item);
-			}
-		}
-		return Maybe.empty();
+		return this.filter((item) => keys.every((key) => item[key] === seek[key]))
+				   .get(0);
 	}
 
 	contains(seek: Partial<T>): boolean {
@@ -59,7 +58,7 @@ export default class Collection<T> {
 		return Collection.of([...this.collection]);
 	}
 
-	filter(fn: (a: T) => boolean): Collection<T> {
+	filter(fn: (a: T, index?: number, array?: T[]) => boolean): Collection<T> {
 		return Collection.of(this.collection.filter(fn));
 	}
 

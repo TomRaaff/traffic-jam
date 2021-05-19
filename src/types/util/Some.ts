@@ -1,7 +1,11 @@
 import Maybe from './Maybe';
 
 export default class Some<T> {
-	constructor(private val: T) {}
+	private val: T;
+	constructor(value: T) {
+		if (value == undefined) throw new Error('Some cannot be undefined');
+		this.val = value;
+	}
 
 	map<S>(fn: (t: T) => S): Maybe<S> {
 		return Maybe.of(fn(this.val));

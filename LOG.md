@@ -78,3 +78,12 @@ Correctly implemented the winning conditions.
 
 #### 12 Mei
 implemented 6 levels
+Also implemented the changing of levels, though I didn't really get around to celebrating
+it...
+'Falsy' values really bit me in the ass today. Apparently 0 is falsy, so when you map the
+value inside a Maybe to a 0, the result will be a None (map creates a new Maybe).
+When refactoring the implementation of the Maybe constructor, I ran into the fact that
+somewhere it is still possible to create a Some with undefined as it's value. Definitely
+a problem. I've been searching for more than an hour, but I can't find the source yet...
+Very frustrating...
+
