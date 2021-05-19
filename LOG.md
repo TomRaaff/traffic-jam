@@ -87,3 +87,25 @@ somewhere it is still possible to create a Some with undefined as it's value. De
 a problem. I've been searching for more than an hour, but I can't find the source yet...
 Very frustrating...
 
+#### 19 Mei
+Finished the project. 
+Somewhere in the last days I've found the bug. In the constructor
+of the Maybe, I was setting the inner value in a if-style that was based around quick
+return statements. But there were no return statements, so I was just overwriting the 
+inner value...
+Also added a restart level button.
+
+### Lessons learned
+- upfront-design is belangrijk.
+    Als ik van tevoren had uitgetekend hoe ik het spelletje had willen maken, dan had ik halverwege
+    niet een grote refactoring hoeven doen.
+- Test driven development heeft mij enorm geholpen in dit proces
+- De implementatie van de Maybe, Either en de Collection waren echt brein-brekers
+- Erg veel geleerd over DOM-manipulatie.
+    - het is lastig om programmatisch, zonder abstracties, het creeeren en wijzigen 
+      van html-elementen goed leesbaar te maken.
+    - template literals zijn fijn om het leesbaar te maken, maar zijn wel weer lastig
+      aan functies toe te wijzen die niet in de file zelf staan. (Die moet je namelijk
+      globaal maken...)
+- Het is mogelijk om de volledige state van een app in de html te houden.
+  Ik heb echter nog niet de grens bereikt tot waar dit nog logisch/onderhoudbaar blijft.
