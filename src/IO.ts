@@ -10,6 +10,17 @@ import Color from './types/Color.enum';
 import { Movement } from './types/Movement';
 import Violation from './types/Violation.enum';
 
+function readLevel(): number {
+	return select('.levelDisplay')
+			.map((el) => {
+				const level = el.innerText.split(' ')[1];
+				return parseInt(level, 10);
+			})
+			.getOrElse(() => {
+				throw new Error('Could not find the level display');
+			});
+}
+
 function renderViolation(violation: Violation): void {
 	select('.popup')
 			.map((element) => {
@@ -41,7 +52,13 @@ function clickArrow(direction: Direction): (e: Event) => void {
 		moveCar(movement, readCars())
 				.map(carsToGrid)
 				.leftOrRight(
-						renderViolation,
+						(violation) => {
+							if (violation === Violation.YOU_WON) {
+								start(readLevel() + 1);
+							} else {
+								renderViolation(violation)
+							}
+						},
 						renderGrid
 				);
 	};
@@ -110,11 +127,6 @@ function createFreeDiv(gridItem: FreeGridItem): string {
 	return `<div class='${gridItem.type}' id="${gridItem.id}">`
 }
 
-// Rogiers JS magic
-// function tag(template: string[], ...values: any[]) {
-// 	console.log({template, values});
-// }
-
 function createCarDiv(gridItem: CarGridItem): string {
 	const { type, color, id, carId, alignment } = gridItem;
 	return `<div class='${type} ${color}' 
@@ -137,10 +149,19 @@ function renderGrid(grid: Collection<GridItem>): void {
 									  .map(el => gridContainer.insertAdjacentHTML('beforeend', el)));
 }
 
-export default function start() {
-	// Rogiers JS magic
-	// const iets = 3;
-	// const verhaal = 'een verhaal';
-	// tag`whuttufuk...? ${iets} nog iets anders ${verhaal}`;
-	renderGrid(buildLevel(0));
+function displayLevel(level: number): void {
+	select('p.levelDisplay')
+			.map((p) => p.innerText = `Level: ${level}`)
+}
+
+function implementRestartFn(): void {
+	const btn = select('.restart')
+			.getOrElse(() => {throw new Error('No reset button found');});
+	btn.addEventListener('click', () => start(readLevel()));
+}
+
+export default function start(level = 0) {
+	renderGrid(buildLevel(level));
+	displayLevel(level);
+	implementRestartFn();
 }

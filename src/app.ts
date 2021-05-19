@@ -38,8 +38,6 @@ function checkBoundaryViolation(newCoordinates: number[]): Either<Violation, num
 	return (areAllWithinBoundaries) ? Either.of(newCoordinates) : Either.ofLeft(Violation.GRID_BOUNDRY_REACHED);
 }
 
-// todo: the columns aren't the first number in the coordinate, they are the second.
-//		I'm now checking if row no. 7 has been reached.
 /**
  * Example newCoordinates: [32, 33, 34]
  * This function checks whether the second character in each number is 7. If it is, you've reached column
