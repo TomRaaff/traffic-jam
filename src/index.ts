@@ -1,5 +1,5 @@
 import './styles.sass';
-import start from './app';
+import start from './IO';
 
 (function () {
 	start();
