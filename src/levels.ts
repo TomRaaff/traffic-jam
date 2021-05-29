@@ -1,4 +1,4 @@
-import Collection from './types/util/Collection';
+import { Collection } from 'tr-utilities-lib';
 import Type from './types/Type.enum';
 import Car from './types/Car';
 import Color from './types/Color.enum';

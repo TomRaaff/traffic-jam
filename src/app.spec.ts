@@ -2,12 +2,10 @@ import { beforeEach, describe, expect, it, } from '@jest/globals';
 import { checkBlockingCarViolation, moveCar } from './app';
 import Direction from './types/Direction.enum';
 import Type from './types/Type.enum';
-import Collection from './types/util/Collection';
+import { Collection } from 'tr-utilities-lib';
 import Car from './types/Car';
 import Color from './types/Color.enum';
 import Violation from './types/Violation.enum';
-
-
 
 describe('App', () => {
 

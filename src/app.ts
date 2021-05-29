@@ -1,8 +1,7 @@
 import Direction from './types/Direction.enum';
 import Type from './types/Type.enum';
 import GridItem from './types/GridItem';
-import Collection from './types/util/Collection';
-import Either from './types/util/Either';
+import { Collection, Either } from 'tr-utilities-lib';
 import Violation from './types/Violation.enum';
 import Car from './types/Car';
 import { Movement } from './types/Movement';

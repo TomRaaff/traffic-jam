@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import Color from './Color.enum';
-import Collection from './util/Collection';
+import { Collection } from 'tr-utilities-lib';
 import Type from './Type.enum';
 
 export default class Car {

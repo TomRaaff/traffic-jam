@@ -1,5 +1,5 @@
 import Direction from './types/Direction.enum';
-import Collection from './types/util/Collection';
+import { Collection } from 'tr-utilities-lib';
 import { addChildren, createElement, focus, getClassList, hasFocus, removeChildren, removeFocus, select, selectAll } from './domApi';
 import Car from './types/Car';
 import { buildLevel } from './levels';

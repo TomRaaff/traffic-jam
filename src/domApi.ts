@@ -1,5 +1,4 @@
-import Maybe from './types/util/Maybe';
-import Collection from './types/util/Collection';
+import { Maybe, Collection } from 'tr-utilities-lib';
 
 export function select(cssSelector: string): Maybe<HTMLElement> {
 	return Maybe.of(document.querySelector(cssSelector) as HTMLElement);
